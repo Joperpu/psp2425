@@ -1,0 +1,25 @@
+site_name: Programación de procesos y servicios
+site_url: https://joperpu.github.io/psp2425
+theme:
+  name: material
+  language: es
+  palette: 
+    - scheme: default
+      primary: deep purple
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+nav:
+  - Página principal: index.md
+
+copyright: "2024 José María Pérez Puentes - Licencia CC BY-NC-SA"
+
+extra:
+  generator: true
