@@ -29,8 +29,8 @@ El módulo busca que el alumnado alance los siguientes objetivos expresados como
 
 ## Sesiones
 
-* ¿?
-* ¿?
+* Miércoles de 17:00 - 19:30.
+* Viernes de 20:30 - 21:30.
 
 ## Contenidos
 
@@ -47,16 +47,18 @@ La metodología de las clases se basará en una estructura teórico-práctica. E
 
 ## Evaluación
 
-Se realizará mediante la superación de los resultados de aprendizaje. La calificación final del módulo se realizará según la ponderación de los RA que aparecen en la programación didáctica.
+Se realizará mediante la superación de los resultados de aprendizaje. La calificación final del módulo se realizará según la ponderación de los RAs que se muestra a continuación:
 
-## Bibliografía de aula
+Los instrumentos que se usarán para evaluar serán los siguientes:
 
-* Programación de Servicios y Procesos. 2ª Edición. Mª Jesús Ramos Martín. Editorial Garceta. 2018.
-* Programación de Servicios y Procesos. Cortijo Bon, Carlos Alberto. Editorial Síntesis. 2021.
-* Programación de Servicios y Procesos. Alberto Sánchez Campos. Editorial Ra-Ma. 2013.
-* Programación de Servicios y Procesos. Fernando Paniagua Martín. Paraninfo. 2020.
+* Ejercicios teóricos o prácticos individuales o en grupo.
+* Pruebas teóricas objetivas.
+* Pruebas prácticas objetivas.
+
+## Contacto
+
+A través del sistema de mensajería de Moodle Centros. El correo corporativo solo para comunicaciones **URGENTES**.
 
 ## Evaluación inicial
 
 Enlace en el curso en [Moodle Centros](https://educacionadistancia.juntadeandalucia.es/centros/cordoba/my/).
-

@@ -1,9 +1,11 @@
-site_name: Programación de procesos y servicios
+site_name: Programación de servicios y procesos
 site_url: https://joperpu.github.io/psp2425
 theme:
   name: material
   language: es
   favicon: assets/images/logo.ico
+  features:
+    - content.code.copy
   palette: 
     - scheme: default
       primary: deep purple
@@ -20,8 +22,19 @@ theme:
   logo: "assets/images/logo.png"
 nav:
   - Página principal: index.md
+  - UD1 - Programación multiproceso: ud1.md
 
 copyright: "2024 José María Pérez Puentes - Licencia CC BY-NC-SA"
 
 extra:
   generator: true
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
