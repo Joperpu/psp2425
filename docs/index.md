@@ -61,4 +61,4 @@ A través del sistema de mensajería de Moodle Centros. El correo corporativo so
 
 ## Evaluación inicial
 
-Enlace en el curso en [Moodle Centros](https://educacionadistancia.juntadeandalucia.es/centros/cordoba/my/).
+Enlace a la [Evaluación inicial](https://forms.gle/bBzSfkZmCHm88hN4A).
