@@ -20,6 +20,10 @@ Diseña una aplicación que permita gestionar una lista de estudiares. Cada estu
 
 Implementa el clásico juego del ahorcado. El programa selecciona una palabra al azar de una lista predefinida y el usuario intenta adivinarla letra por letra.
 
+### Verificador de palíndromos
+
+Desarrolla una aplicación de consola que permita al usuario ingresar una palabra o frase y determine si es un palíndromo. Un palíndromo es una palabra o frase que se lee igual de izquierda a derecha que de derecha a izquierda, ignorando espacios, signos de puntuación y diferencias entre mayúsculas y minúsculas.
+
 ## Programas, procesos y servicios
 
 ### Programa
