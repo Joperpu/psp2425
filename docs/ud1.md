@@ -228,7 +228,13 @@ El constructor de **ProcessBuilder** admite parámetros que serán entregados al
 La ejecución del proceso se realiza a partir de la invocación al método _start()_:
 
 ```java
+// Ejemplo en Windows
 ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "dir");
+// Ejemplo en Linux
+ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ls");
+// Ejemplo en MacOS
+ProcessBuilder pb = new ProcessBuilder("sh", "-c", "ls");
+
 Process p = pb.start();
 ```
 ### Métodos de la clase **java.lang.ProcessBuilder**
