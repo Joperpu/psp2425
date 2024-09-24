@@ -160,6 +160,7 @@ Los procesos poseen dos maneras de comunicarse con otros procesos:
 * **Recursos (memoria) compartidos**: Solo se puede usar cuando los dos procesos se encuentran en la misma máquina y permite la sincronización de los procesos en función del valor o estado de un recurso compartido.
 
 La comunicación entre procesos se denomina **IPC** (_Inter-Process Communication__) y existen diversas alternativas para llevarla a cabo:
+
 * Utilización de sockets.
 * Utilización de flujos de entrada y salida.
 * RPC (_Remote Process Call_). Llamada a procedimiento remoto.
@@ -295,6 +296,101 @@ PrintWriter toProcess = new PrintWriter(
 toProcess.println("Enviar al hijo");
 ```
 
+### Ejercicio resuelto de comunicación entre procesos
+
+Implementa una aplicación, llamada **Frecuencia**, que dado un texto recibido a través de su entrada estándar obtenga la frecuencia absoluta de cada una de las vocales, es decir, la cantidad de veces que aparece cada vocal. En el caso de que una de las vocales no aparezca la frecuencia será 0. Por ejemplo: para la palabra “estupendo” el resultado debe ser 0 2 0 1 1.
+
+Implementa una aplicación que introduzca por teclado una cadena y ejecute el programa anterior para visualizar la salida del número de vocales de dicha cadena. La aplicación se llamará **Lanzador**.
+
+#### Frecuencia.java
+
+```java
+import java.util.Scanner;
+
+public class Frecuencia {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        scanner.close();
+
+        int countA = 0;
+        int countE = 0;
+        int countI = 0;
+        int countO = 0;
+        int countU = 0;
+
+        input = input.toLowerCase();
+
+        for (char c : input.toCharArray()) {
+            switch (c) {
+                case 'a':
+                    countA++;
+                    break;
+                case 'e':
+                    countE++;
+                    break;
+                case 'i':
+                    countI++;
+                    break;
+                case 'o':
+                    countO++;
+                    break;
+                case 'u':
+                    countU++;
+                    break;
+                default:
+                    // No es una vocal
+            }
+        }
+
+        System.out.println(countA + " " + countE + " " + countI + " " + countO + " " + countU);
+    }
+}
+```
+
+#### Lanzador.java
+
+```java
+import java.io.*;
+
+public class Lanzador {
+    public static void main(String[] args) {
+        try {
+            // Leer cadena desde el teclado
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Introduce una cadena: ");
+            String inputString = reader.readLine();
+
+            // Obtener el classpath actual
+            String classpath = System.getProperty("java.class.path");
+
+            // Crear el proceso para ejecutar Frecuencia
+            ProcessBuilder pb = new ProcessBuilder ("java", "-cp", classpath, "Frecuencia");
+            Process process = pb.start();
+
+            // Enviar la cadena al proceso Frecuencia
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+            writer.write(inputString);
+            writer.newLine(); // Importante para indicar el fin de la entrada
+            writer.flush();
+            writer.close();
+
+            // Leer la salida del proceso Frecuencia
+            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = processOutputReader.readLine();
+            System.out.println("Frecuencia de vocales: " + line);
+
+
+            process.waitFor(); // Esperar a que el proceso termine
+            processOutputReader.close();
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
 ## Redirección de la E/S
 
 En un sistema real probablemente necesitemos guardar los resultados de un proceso en un archivo de log o de errores para su posterior análisis.
@@ -309,3 +405,39 @@ Los métodos a utilizar serían _redirectOutput(File)_, _redirectInput(File)_ y 
 | **Redirect.to(File)** | La información se guardará en el fichero indicado. Si existe, se vacía. |
 | **Redirect.from(File)** | La información se leerá del fichero indicado. |
 | **Redirect.appendTo(File)** | La información se añadirá en el fichero indicado. Si existe, no se vacía. |
+
+### Ejercicio resuelto de redirección de la salida de un proceso a un fichero de texto
+
+Crea una aplicación Java que cree dos procesos. El primero de ellos deberá listar el contenido del directorio en el que se encuentra, mientras que el segundo deberá mostrar la información del sistema. Almacena en dos ficheros distintos la salida de cada uno de los procesos. Finalmente sincronizalos.
+
+#### MultiProcessApp.java
+```java
+import java.io.*;
+
+public class MultiProcessApp {
+
+    public static void main(String[] args) {
+        try {
+            // Crear el primer proceso que lista el contenido del directorio actual (equivalente a 'dir' en Windows)
+            ProcessBuilder processBuilder1 = new ProcessBuilder("sh", "-c", "ls");
+            processBuilder1.redirectOutput(new File("output_ls.txt"));  // Redirigir la salida a un archivo
+            Process process1 = processBuilder1.start();
+
+            // Crear el segundo proceso que muestra la información del sistema (equivalente a 'systeminfo' en Windows)
+            ProcessBuilder processBuilder2 = new ProcessBuilder("sh", "-c", "uname -a");
+            processBuilder2.redirectOutput(new File("output_uname.txt"));  // Redirigir la salida a un archivo
+            Process process2 = processBuilder2.start();
+
+            // Sincronizar ambos procesos
+            int exitCode1 = process1.waitFor();
+            int exitCode2 = process2.waitFor();
+
+            System.out.println("Proceso 1 terminado con código: " + exitCode1);
+            System.out.println("Proceso 2 terminado con código: " + exitCode2);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```

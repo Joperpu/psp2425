@@ -22,7 +22,9 @@ theme:
   logo: "assets/images/logo.png"
 nav:
   - Página principal: index.md
-  - UD1 - Programación multiproceso: ud1.md
+  - UD1 - Programación multiproceso:
+    - Teoría UD1: ud1.md
+    #- Práctica 1.1: pr1.1.md
 
 copyright: "2024 José María Pérez Puentes - Licencia CC BY-NC-SA 4.0"
 
