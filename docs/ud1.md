@@ -159,7 +159,7 @@ Los procesos poseen dos maneras de comunicarse con otros procesos:
 * **Intercambio de mensajes**: Es la forma habitual cuando los procesos se encuentran en máquinas distintas. El intercambio de información se realiza a través de un protocolo establecido preciamente.
 * **Recursos (memoria) compartidos**: Solo se puede usar cuando los dos procesos se encuentran en la misma máquina y permite la sincronización de los procesos en función del valor o estado de un recurso compartido.
 
-La comunicación entre procesos se denomina **IPC** (_Inter-Process Communication__) y existen diversas alternativas para llevarla a cabo:
+La comunicación entre procesos se denomina **IPC** (_Inter-Process Communication_) y existen diversas alternativas para llevarla a cabo:
 
 * Utilización de sockets.
 * Utilización de flujos de entrada y salida.
