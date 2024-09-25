@@ -200,7 +200,7 @@ En el paque **java.lang** tenemos dos clases para la gestión de procesos:
 * **java.lang.Process**
     * [https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Process.html](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Process.html)
 
-Las instancias de **ProcessBuilder** gestionan los atributos de los procesos, mientras que las instancias de **Process** controla la ejecución ed esos mismos procesos cuando se ejecutan.
+Las instancias de **ProcessBuilder** gestionan los atributos de los procesos, mientras que las instancias de **Process** controla la ejecución de esos mismos procesos cuando se ejecutan.
 
 La clase **Process** es **abstracta** y, por lo tanto, no se pueden crear objetos de ella, sino de subclases suyas, que. de hecho, implementan procesos nativos, es decir, procesos de plataformas específicas que se ejecutan en un sistema operativo particular para un tipo de procesador particular.
 

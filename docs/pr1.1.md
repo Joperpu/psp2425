@@ -4,7 +4,7 @@
 
 Implementa una aplicación, llamada Cadenas, que genere cadenas formadas por caracteres del alfabeto. La cantidad de cadenas será indicada por el usuario al ejecutar la aplicación y su longitud será aleatoria (máximo 20 caracteres). Las cadenas se deben escribir en su salida estándar.
 
-Implementa una aplicación para que lance al menos 10 instancias de la aplicación Cadenas. El usuario indicará el número de instancias (menor que 10) y el número de cadenas a generar cada instancia. La aplicación se llamará Generador.
+Implementa una aplicación para que lance al menos 10 instancias de la aplicación Cadenas. El usuario indicará el número de instancias (al menos 10) y el número de cadenas a generar cada instancia. La aplicación se llamará Generador.
 
 ## Criterios de evaluación
 
