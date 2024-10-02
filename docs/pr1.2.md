@@ -89,6 +89,15 @@ Igualmente, se deben crear tantos ficheros de salida de error como ficheros de e
 
 Este programa se llamará *Ejecuta_Ejercicio2*.
 
+Un ejemplo del contenido del fichero con datos de alumnos podría ser el siguiente:
+
+	FELIPE 19
+	PABLO 21
+	MARIA 11
+	IVAN 1000
+	*
+
+
 ## Criterios de evaluación
 
 Esta práctica evalúa los criterios de evaluación **e)**, **f)**, **g)** y **h)** del **RA1**. Para su corrección se tendrá en cuenta en cada uno de los ejercicios:
