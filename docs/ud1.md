@@ -119,13 +119,13 @@ Por su parte, hablamos de __programación concurrente__ cuando se ejecutan vario
 
 ### Ventajas
 
-* Permite incrementar el rendimiento del sistema, porque los procesadores pasan a ejecutar otros procesos cuando el proceso que ejecutan está descopuado o a la espera de que termine una operación de E/S.
+* Permite incrementar el rendimiento del sistema, porque los procesadores pasan a ejecutar otros procesos cuando el proceso que ejecutan está desocupado o a la espera de que termine una operación de E/S.
 * Hace posible un menor tiempo de respuesta, ya que el tiempo de procesador se distribuye entre todos los procesos en ejecución.
 
 ### Inconvenientes
 
 * Dificulta la implementación de mecanismos adecuados de sincronización y comunicación entre procesos.
-* Es posible que la sobrecarga que suponen anule la mejora en el rendmiento que propociona la concurrencia.
+* Es posible que la sobrecarga que suponen anule la mejora en el rendimiento que proporciona la concurrencia.
 * En sistemas distribuidos, la red podría convertirse en un cuello de botella si no tiene la suficiente capacidad para el tráfico que genera el intercambio de mensajes entre procesos.
 
 ## Programación paralela y distribuida
@@ -134,11 +134,11 @@ La __programación paralela__ consiste en la ejecución de varios procesos concu
 
 La __programación distribuida__ consiste en la ejecución de varios procesos concurrentes en un sistema distribuido. Se usa también este término para hacer referencia al desarrollo de programas que utilizan varios procesos concurrentes que pueden ejecutarse en distintos procesadores de un sistema distribuido, y a las técnicas que lo hacen posible.
 
-En un __sistema distribuido__ no hay memoria compartida ni red de conexión expecífica entre los distintos ordenadores. La comunicación entre procesos se realiza mediante mensajes a través de la red de comunicaciones que conecta los distintos ordenadores, para lo que se suele utlizar los protocolos de red UDP o TCP.
+En un __sistema distribuido__ no hay memoria compartida ni red de conexión específica entre los distintos ordenadores. La comunicación entre procesos se realiza mediante mensajes a través de la red de comunicaciones que conecta los distintos ordenadores, para lo que se suele utilizar los protocolos de red UDP o TCP.
 
 ## Estados de un proceso
 
-Como hemos comentado al principio, los procesos son programas en ejecición, que requieren recursos como el tiempo de la CPU, memoria y acceso a dispositivos de entrada/salida. 
+Como hemos comentado al principio, los procesos son programas en ejecución, que requieren recursos como el tiempo de la CPU, memoria y acceso a dispositivos de entrada/salida. 
 
 Cada proceso puede estar en uno o varios __estados__ durante su ciclo de vida. Estos estados definen qué está haciendo el proceso en un momento dado y permiten al sistema operativo gestionar múltiples procesos de manera eficiente.
 
@@ -156,7 +156,7 @@ Los estados básicos en los que puede estar un proceso son los siguientes:
 
 Los procesos poseen dos maneras de comunicarse con otros procesos:
 
-* **Intercambio de mensajes**: Es la forma habitual cuando los procesos se encuentran en máquinas distintas. El intercambio de información se realiza a través de un protocolo establecido preciamente.
+* **Intercambio de mensajes**: Es la forma habitual cuando los procesos se encuentran en máquinas distintas. El intercambio de información se realiza a través de un protocolo establecido previamente.
 * **Recursos (memoria) compartidos**: Solo se puede usar cuando los dos procesos se encuentran en la misma máquina y permite la sincronización de los procesos en función del valor o estado de un recurso compartido.
 
 La comunicación entre procesos se denomina **IPC** (_Inter-Process Communication_) y existen diversas alternativas para llevarla a cabo:
@@ -164,7 +164,7 @@ La comunicación entre procesos se denomina **IPC** (_Inter-Process Communicatio
 * Utilización de sockets.
 * Utilización de flujos de entrada y salida.
 * RPC (_Remote Process Call_). Llamada a procedimiento remoto.
-* Mediente el uso de sistemas de persistencia.
+* Mediante el uso de sistemas de persistencia.
 * Mediante el uso de servicios proporcionados a través de Internet.
 
 ## Sincronización entre procesos
@@ -187,13 +187,13 @@ En Java, la creación de un proceso puede realizarse de dos maneras diferentes:
 
 La clase **java.lang.Runtime** se usa principalmente para interactuar con el JRE de Java. Esta clase proporciona métodos para lanzar procesos, llamar al recolector de basura, saber la cantidad de memoria disponible y libre, etc.
 
-Toda aplicación Java tiene una única instancia de la clase Runtime, que permite que la propia aplicación interactúe con su entorno de ejecición a través del método estático **getRuntime()**.
+Toda aplicación Java tiene una única instancia de la clase Runtime, que permite que la propia aplicación interactúe con su entorno de ejecución a través del método estático **getRuntime()**.
 
 Este método proporciona un canal de comunicación entre la aplicación y su entorno, posibilidanto la interacción del sistema operativo a través del método **exec**.
 
 [https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html)
 
-En el paque **java.lang** tenemos dos clases para la gestión de procesos:
+En el paquete **java.lang** tenemos dos clases para la gestión de procesos:
 
 * **java.lang.ProcessBuilder**:
     * [https://docs.oracle.com/en%2Fjava%2Fjavase%2F21%2Fdocs%2Fapi%2F%2F/java.base/java/lang/ProcessBuilder.html](https://docs.oracle.com/en%2Fjava%2Fjavase%2F21%2Fdocs%2Fapi%2F%2F/java.base/java/lang/ProcessBuilder.html)
@@ -218,7 +218,7 @@ La clase **Process** tiene métodos para lanzar un proceso, obtener información
 | **isAlive()** | Determina si el proceso está o no en ejecución. |
 | **waitFor()** | Detiene la ejecución del programa que lanza el proceso a la espera de que este último termine. |
 
-Con **ProcessBuilder** se puede configurar previamente el entorno de ejecución de los procesos que crea y, en particular, redigirir su entrada y salida.
+Con **ProcessBuilder** se puede configurar previamente el entorno de ejecución de los procesos que crea y, en particular, redirigir su entrada y salida.
 
 El constructor de **ProcessBuilder** admite parámetros que serán entregados al proceso que se crea:
 
@@ -278,7 +278,7 @@ Primero iniciamos un nuevo proceso usando _pbuilder.start()_. El médoto _start(
 
 A continuación creamos un _InputStreamReader_ que toma el flujo de entrada del proceso _(p.getInputStream())_, que en realidad corresponde a la **salida estándar (stdout)** del proceso. Este _InputStreamReader_ se envuelve de un _BufferedReader_ para facilitar la lectura eficiente de texto, especialmente línea a línea.
 
-Finalmente, el bucle while utiliza _processOutput.readLine()_ para leer cada línea de la salida del proceso. Este método devuelve _null_ cuando no hay más líneas por leer. Dentro del bucle cada línea leída se imprime en consola, precedida por "> ". Por último, despues de leer todas las líneas se cierra el _BufferedReader_ para linerar los recursos asociados.
+Finalmente, el bucle while utiliza _processOutput.readLine()_ para leer cada línea de la salida del proceso. Este método devuelve _null_ cuando no hay más líneas por leer. Dentro del bucle cada línea leída se imprime en consola, precedida por "> ". Por último, después de leer todas las líneas se cierra el _BufferedReader_ para liberar los recursos asociados.
 
 ### getErrorStream()
 
@@ -291,7 +291,7 @@ Podemos obtener la salida de error (stderr) que genera el proceso hijo para proc
 
 Este método se usa para enviar información desde el proceso padre al proceso hijo. De la misma forma que con las entradas que llegan desde el proceso hijo, podemos enviar la información usando directamente el _OutputStream_ del proceso, pero lo haremos con un Decorator.
 
-En este caso, el _wrapper_ de mayor nivel para usar un _OutputStream_ es la clase _PrintWriter_ que nos ofrece métodos similares a los de _System.out.printxxxxx_ para gestionar el flijo de comunicación con el proceso hijo.
+En este caso, el _wrapper_ de mayor nivel para usar un _OutputStream_ es la clase _PrintWriter_ que nos ofrece métodos similares a los de _System.out.printxxxxx_ para gestionar el flujo de comunicación con el proceso hijo.
 
 ```java
 PrintWriter toProcess = new PrintWriter(
@@ -401,7 +401,7 @@ public class Lanzador {
 
 En un sistema real probablemente necesitemos guardar los resultados de un proceso en un archivo de log o de errores para su posterior análisis.
 
-Para redigirir la E/S lo haremos mientras preparamos el proceso para ser ejecutado, de forma que cuando se lancen sus stream de E/S salida se modifiquen. Por eso, en esta ocasión, los métodos que nos permiten redireccionar la E/S de los procesos son méetodos de la clase **ProcessBuilder**.
+Para redigirir la E/S lo haremos mientras preparamos el proceso para ser ejecutado, de forma que cuando se lancen sus stream de E/S salida se modifiquen. Por eso, en esta ocasión, los métodos que nos permiten redireccionar la E/S de los procesos son métodos de la clase **ProcessBuilder**.
 
 Los métodos a utilizar serían _redirectOutput(File)_, _redirectInput(File)_ y _redirectError(File)_. Para hacer las redirecciones también podemos utilizar la clase _ProcessBuilder.Redirect_ como parámetro para los métodos anteriores, utilizando uno de los siguientes valores.
 
@@ -414,7 +414,7 @@ Los métodos a utilizar serían _redirectOutput(File)_, _redirectInput(File)_ y 
 
 ### Ejercicio resuelto de redirección de la salida de un proceso a un fichero de texto
 
-Crea una aplicación Java que cree dos procesos. El primero de ellos deberá listar el contenido del directorio en el que se encuentra, mientras que el segundo deberá mostrar la información del sistema. Almacena en dos ficheros distintos la salida de cada uno de los procesos. Finalmente sincronizalos.
+Crea una aplicación Java que cree dos procesos. El primero de ellos deberá listar el contenido del directorio en el que se encuentra, mientras que el segundo deberá mostrar la información del sistema. Almacena en dos ficheros distintos la salida de cada uno de los procesos. Finalmente sincronizarlos.
 
 #### MultiProcessApp.java
 ```java

@@ -1,6 +1,6 @@
 # Programación de servicios y procesos
 
-## Introdución
+## Introducción
 
 Bienvenido a los apuntes del módulo profesional de **Programación de servicios y procesos** que se imparte en el segundo curso del *Ciclo formativo de Grado Superior de Desarrollo de Aplicaciones Multiplataforma*.
 
