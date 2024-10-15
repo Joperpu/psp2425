@@ -862,7 +862,7 @@ El funcionamiento de los semáforos se basa en el uso de dos métodos, así como
 
 ### Mecanismos de alto nivel para concurrencia
 
-Java, en su paquete **java.util.concurrent* proporciona varias clases *thread-safe* que nos permiten acceder a los elementos de colecciones y tipos de datos sin preocuparnos de la concurrencia.
+Java, en su paquete **java.util.concurrent** proporciona varias clases *thread-safe* que nos permiten acceder a los elementos de colecciones y tipos de datos sin preocuparnos de la concurrencia.
 
 - **Colas concurrente**: La interfaz **BlockingQueue** define una cola FIFO que bloquea procesos que intentan extraer un elemento cuando la cola está vacía, a la espera de que haya algún elemento disponible en ella.
 - **Colecciones concurrentes**: El uso de colecciones simultáneas es una forma recomendada de crear estructuras de datos compatibles con procesos. Dichas colecciones incluyen ConcurrentHashMap, ConcurrentSkipListMap, ConcurrentSkipListSet, CopyOnWriteArraylist y CopyOnWriteArraySet.
