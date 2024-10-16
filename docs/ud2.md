@@ -1,4 +1,4 @@
-# Unidad 2 - Programación multiproceso
+# Unidad 2 - Programación multihilo
 
 ## El concepto de hilo en programación
 
