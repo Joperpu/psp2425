@@ -455,7 +455,7 @@ public class LanzaHilosYEsperaQueTerminen {
 
 Los hilos heredan la prioridad del padre en Java, pero este valor puede ser cambiado con el método setPriority(). Con getPriority() podemos saber la prioridad de un hilo.
 
-El valor de la prioridad varía entre 1 y 10. Cuanto más alto es el valor, mayor es la prioridad. La clase Thread define las siguientes constantes MIN_PRIORITY (valor 1), MAX_PRIORITY (valor 19) y NORM_PRIORITY (valor 5).
+El valor de la prioridad varía entre 1 y 10. Cuanto más alto es el valor, mayor es la prioridad. La clase Thread define las siguientes constantes MIN_PRIORITY (valor 1), MAX_PRIORITY (valor 10) y NORM_PRIORITY (valor 5).
 
 El planificador elige el hilo en función de su prioridad. Si dos hilos tienen la misma prioridad realiza un *round robin*, es decir, va alternando los hilos de forma cíclica.
 
