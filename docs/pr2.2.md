@@ -12,6 +12,8 @@ Se propone utilizar una clase NumeroOculto con un método *int propuestaNumero(i
 
 No hace falta crear una clase para el hilo que genera el número al azar. Es el hilo inicial, que ejecuta el método main, y que crea el resto de los hilos.
 
+Si quieres, puedes usar para orientarte el siguiente diagrama de clases:
+
 <center>![Diagrama de clases](assets/images/ud2/img03.png){ width="700" }</center>
 
 ## Criterios de evaluación
