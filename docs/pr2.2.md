@@ -1,4 +1,4 @@
-# Práctica 2.1 - Uso de monitores en Java
+# Práctica 2.2 - Uso de monitores en Java
 
 ## Descripción de la tarea
 
