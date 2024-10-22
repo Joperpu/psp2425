@@ -10,6 +10,8 @@ Crea una clase que implemente la interfaz Runnable cuya única funcionalidad sea
 
 ## Criterios de evaluación
 
+Esta práctica evalúa los criterios de evaluación **a)**, **b)**, **c)**, **d)** y **h)** del **RA2**. Para su corrección se tendrá en cuenta:
+
 1. Funcionalidad del ejercicio 1 (3,5 puntos)
 	- Implementa adecuadamente todos los requisitos de la aplicación.
 2. Funcionalidad del ejercicio 2 (3,5 puntos)

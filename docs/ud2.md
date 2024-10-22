@@ -781,6 +781,70 @@ Cuando se desbloquea un hilo porque otro ha llamado a notify()/notifyAll(), el h
 
 <center>![Compartición de recursos con bloqueo dependiente de su estado](assets/images/ud2/img02.png){ width="300" }</center>
 
+##### Ejemplo de uso de monitores
+
+```java
+package monitores;
+
+class Contador {
+    // monitor contador
+
+    private int actual;
+
+    public Contador(int inicial) {
+        actual = inicial;
+    }
+
+    public synchronized void inc() {
+        actual++;
+    }
+
+    public synchronized void dec() {
+        actual--;
+    }
+
+    public synchronized int valor() {
+        return actual;
+    }
+}
+
+class Usuario extends Thread {
+    // clase hilo usuario
+
+    private Contador cnt;
+
+    public Usuario(String nombre, Contador cnt) {
+        super(nombre);
+        this.cnt = cnt;
+    }
+
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            cnt.inc();
+            System.out.println("Hola, soy " + this.getName() + ", mi contador vale " + cnt.valor());
+        }
+    }
+}
+
+class EjemploContador {
+    // principal
+
+    final static int nHilos = 20;
+
+    public static void main(String[] args) {
+        // metodo principal      
+        final Contador cont1 = new Contador(0);
+        Usuario hilo[] = new Usuario[nHilos];
+        for (int i = 0; i < nHilos; i++) {
+            //crea hilos
+            hilo[i] = new Usuario("El hilo-" + i, cont1);
+            // lanza hilos      
+            hilo[i].start();
+        }
+    }
+}
+```
+
 ##### Solución al ejemplo de sincronización de hilos
 
 ###### Contador.java
@@ -788,31 +852,78 @@ Cuando se desbloquea un hilo porque otro ha llamado a notify()/notifyAll(), el h
 ```java
 package hilosnosincronizados;
 
-public class Restador implements Runnable {
+public class Contador {
 
-    private Contador c;
-    private String name;
+    private int c = 0;
 
-    public Restador(String name, Contador c) {
-        // Restador doesn't extend Thread, so it cannot call the Thread constructor
-        // super(name);
-        this.name = name;
+    public Contador(int c) {
         this.c = c;
     }
 
-    @Override
-    public void run() {
-        Thread.currentThread().setName(this.name);
-        // Ejecutar 300 veces con espera entre 50ms y 150ms
-        for (int i = 0; i < 300; i++) {
+    public synchronized void incrementa() {
+        c++;
+    }
+
+    public synchronized void decrementa() {
+        c--;
+    }
+
+    public synchronized int valor() {
+        return c;
+    }
+}
+```
+Otra solución, garantizando que se alternen suma y resta:
+
+```java
+package hilossincronizados;
+
+public class Contador {
+
+    private int c = 0;
+    boolean ahoraSumador = true;
+
+    public Contador(int c) {
+        this.c = c;
+        ahoraSumador = true;
+    }
+
+    public synchronized void incrementa() {
+        while (!ahoraSumador) {
             try {
-                c.decrementa();
-                System.out.println(Thread.currentThread().getName() + " " + c.valor());
-                Thread.sleep((long) (Math.random() * 100 + 50));
+                wait();
             } catch (InterruptedException ex) {
-                // Nothing
             }
         }
+
+        // El hilo hace su tarea
+        c++;
+        System.out.println(Thread.currentThread().getName() + " " +  valor());
+        
+        // Cambia el estado y avisa al resto de hilos por si alguno puede seguir
+        ahoraSumador = false;
+        notifyAll();
+
+    }
+
+    public synchronized void decrementa() {
+        while (ahoraSumador) {
+            try {
+                wait();
+            } catch (InterruptedException ex) { }
+        }
+
+        // El hilo hace su tarea
+        c--;
+        System.out.println(Thread.currentThread().getName() + " " +  valor());
+        
+        // Cambia el estado y avisa al resto de hilos por si alguno puede seguir
+        ahoraSumador = true;
+        notifyAll();
+    }
+
+    public synchronized int valor() {
+        return c;
     }
 }
 ```
@@ -835,6 +946,101 @@ Se puede representar como un objeto, una colección o cualquier estructura de da
 
 Estas dos clases son las que van a tener, dentro del método run, la lógica de la aplicación, accediendo al objeto compartido, modificando las propiedades compartido, modificando las propiedades compartidas entre los diferentes hilos (productores y/o consumidores) y actualizando el estado del objeto compartido para que module su funcionalidad.
 
+###### Ejemplo productor-consumidor
+
+```java
+package productorconsumidor;
+
+class Contenedor<T> {
+
+    private T dato;
+
+    synchronized public T get() {
+        T result = this.dato;
+        this.dato = null;
+        return result;
+    }
+
+    synchronized public void put(T valor) {
+        this.dato = valor;
+    }
+
+    synchronized boolean datoDisponible() {
+        return (this.dato != null);
+    }
+}
+
+class HiloProductor implements Runnable {
+
+    final Contenedor<Integer> cont;
+    String miNombre;
+
+    HiloProductor(Contenedor<Integer> cont, String miNombre) {
+        this.cont = cont;
+        this.miNombre = miNombre;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1;; i++) {
+            synchronized (this.cont) {
+                while (this.cont.datoDisponible()) {
+                    try {
+                        this.cont.wait();
+                    } catch (InterruptedException ex) {
+                    }
+                }
+                System.out.printf("Hilo %s produce valor %s.\n", this.miNombre, i);
+                this.cont.put(i);
+                this.cont.notify();
+            }
+        }
+    }
+
+}
+
+class HiloConsumidor implements Runnable {
+
+    final Contenedor<Integer> cont;
+    String miNombre;
+
+    HiloConsumidor(Contenedor<Integer> cont, String miNombre) {
+        this.cont = cont;
+        this.miNombre = miNombre;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            synchronized (this.cont) {
+                while (!this.cont.datoDisponible()) {
+                    try {
+                        this.cont.wait();
+                    } catch (InterruptedException ex) {
+                    }
+                }
+                Integer dato = this.cont.get();
+                this.cont.notify();
+                System.out.printf("Hilo %s consume valor %d.\n", this.miNombre, dato);
+            }
+        }
+    }
+
+}
+
+public class ProductorConsumidor {
+
+    public static void main(String[] args) {
+        Contenedor<Integer> almacen = new Contenedor<Integer>();
+        Thread hprod = new Thread(new HiloProductor(almacen, "P"));
+        Thread hcons = new Thread(new HiloConsumidor(almacen, "C"));
+        hprod.start();
+        hcons.start();
+    }
+
+}
+```
+
 ##### Clase compartida
 
 Aquí vamos a crear los métodos a los que acceden productores y consumidores y, además, vamos realizar la sincronización entre hilos para que no se produzcan condiciones de carrera.
@@ -852,6 +1058,82 @@ El funcionamiento de los semáforos se basa en el uso de dos métodos, así como
 - **permits**: Se inicializa a la cantidad de recursos existentes o hilos que queramos que puedan acceder simultáneamente.
 
 [https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Semaphore.html](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/Semaphore.html)
+
+##### Ejemplo de uso de semáforos
+
+###### Hilo.java
+
+```java
+
+package semaforos;
+
+import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Hilo extends Thread {
+
+    private Semaphore sem;
+
+    public Hilo(Semaphore sem) {
+        this.sem = sem;
+    }
+
+    public void run() {
+        int espera = 0;
+
+        while (true) {
+            try {
+                sem.acquire();
+
+                System.out.println("Semáforo adquirido por " + this.getName());
+                espera = (int) (Math.random() * 2000 + 500);
+                System.out.println(this.getName() + " procesando acción de espera " + espera);
+                System.out.println("Semáforo liberado por " + this.getName());
+                sleep(espera);
+                sem.release();
+
+                espera = (int) (Math.random() * 500);
+                sleep(espera);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Hilo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+}
+```
+
+###### App.java
+
+```java
+package semaforos;
+
+import java.util.concurrent.Semaphore;
+
+public class App {
+    public static void main( String[] args ) throws InterruptedException {
+        Semaphore sema = new Semaphore(2);
+
+        Hilo h1 = new Hilo(sema);
+        Hilo h2 = new Hilo(sema);
+        Hilo h3 = new Hilo(sema);
+
+        h1.start();
+        h2.start();
+        h3.start();
+
+        h3.join();
+        System.out.println("h3 terminado" );
+        h1.join();
+        System.out.println("h1 terminado" );
+        h2.join();
+        System.out.println("h2 terminado" );
+
+    }
+}
+```
 
 #### Interrupción de hilos
 
