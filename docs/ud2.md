@@ -930,23 +930,86 @@ public class Contador {
 
 #### El modelo productor-consumidor
 
-Un problema típico de sincronización es el que representa el modelo **Productor-Consumidor**. Se produce cuando uno o más hilos producen datos a procesar y otros hilos los consumen. El problema surge cuando el productor produce datos más rápido que el consumidor los consuma, dando lugar a que el consumidor se salte algún dato. Igualmente, el consumidor puede consumir más rápido que el productor produce, entonces el consumidor puede recoger varias veces el mismo dato o puede no tener datos que recoger o puede detenerse, etc.
+Un problema típico de sincronización es el que representa el modelo **Productor-Consumidor**. Se produce cuando uno o más hilos producen datos a procesar y otros hilos los consumen. 
+
+El programa describe dos procesos, productor y consumidor, ambos comparten un búfer de tamaño finito. La tarea del productor es generar un producto, almacenarlo y comenzar nuevamente; mientras que el consumidor toma (simultáneamente) productos uno a uno. El problema consiste en que el productor no añada más productos que la capacidad del buffer y que el consumidor no intente tomar un producto si el buffer está vacío.
+
+La idea para la solución es la siguiente, ambos procesos (productor y consumidor) se ejecutan simultáneamente y se “despiertan” o “duermen” según el estado del buffer. Concretamente, el productor agrega productos mientras quede espacio y en el momento en que se llene el buffer se pone a “dormir”. Cuando el consumidor toma un producto notifica al productor que puede comenzar a trabajar nuevamente. En caso contrario, si el buffer se vacía, el consumidor se pone a dormir y en el momento en que el productor agrega un producto crea una señal para despertarlo. Una inadecuada implementación del problema puede terminar en un deadlock, donde ambos procesos queden en espera de ser despertados.
 
 [https://es.wikipedia.org/wiki/Problema_productor-consumidor](https://es.wikipedia.org/wiki/Problema_productor-consumidor)
 
+##### Aproximación errónea
+
+Para resolver el problema cualquier programador podría llegar a la solución que se muestra a continuación. En la misma se utilizan dos bibliotecas, sleep y wakeup. La variable global itemCount contiene el número de elementos en el buffer.
+
+```c
+int itemCount = 0;
+
+procedure producer() {
+    while (true) {
+        item = produceItem();
+
+        if (itemCount == BUFFER_SIZE) {
+            sleep();
+        }
+
+        putItemIntoBuffer(item);
+        itemCount = itemCount + 1;
+
+        if (itemCount == 1) {
+            wakeup(consumer);
+        }
+    }
+}
+
+procedure consumer() {
+    while (true) {
+
+        if (itemCount == 0) {
+            sleep();
+        }
+
+        item = removeItemFromBuffer();
+        itemCount = itemCount - 1;
+
+        if (itemCount == BUFFER_SIZE - 1) {
+            wakeup(producer);
+        }
+
+        consumeItem(item);
+    }
+}
+```
+El problema con esta aproximación es que puede caer en un deadlock, considere el siguiente escenario:
+
+1. El consumidor acaba de consultar la variable itemCount, nota que es cero y pasa a ejecutar el bloque if.
+2. Justo antes de llamar a la función sleep() el consumidor es interrumpido y el productor comienza a trabajar.
+3. El productor crea un objeto, lo agrega al buffer y aumenta itemCount.
+4. Como el buffer estaba vacío antes de la última adición el productor intenta despertar al consumidor.
+5. Desafortunadamente el consumidor no estaba durmiendo todavía luego la llamada para despertarlo se pierde. Una vez que el consumidor comienza a trabajar nuevamente pasa a dormir y nunca más será despertado. Esto pasa porque el productor solo lo despierta si el valor de itemCount es 1.
+6. El productor seguirá trabajando hasta que el buffer se llene, cuando esto ocurra se pondrá a dormir también.
+
+Como ambos procesos dormirán por siempre, hemos caído en un deadlock. La esencia del problema es que se perdió una llamada enviada para despertar a un proceso que todavía no estaba dormido. Si no se perdiera, todo funcionaría.
+
+##### Solución usando monitores
+
 Este problema se base en tres clases, aunque dependiendo del problema, podemos encontrarnos que no tenemos productor o consumidor.
 
-##### Clase principal
+###### Clase principal
 
 En esta clase se declara el objeto o propiedad que van a compartir el productor y el consumidor. Este objeto es a través del que se realiza la comunicación, sincronización e intercambio de información entre los hilos.
 
 Se puede representar como un objeto, una colección o cualquier estructura de datos que pueda compartir hilos.
 
-##### Clase productor y consumidor
+###### Clase productor y consumidor
 
 Estas dos clases son las que van a tener, dentro del método run, la lógica de la aplicación, accediendo al objeto compartido, modificando las propiedades compartido, modificando las propiedades compartidas entre los diferentes hilos (productores y/o consumidores) y actualizando el estado del objeto compartido para que module su funcionalidad.
 
-###### Ejemplo productor-consumidor
+###### Clase compartida
+
+Aquí vamos a crear los métodos a los que acceden productores y consumidores y, además, vamos realizar la sincronización entre hilos para que no se produzcan condiciones de carrera.
+
+###### Ejemplo en Java productor-consumidor
 
 ```java
 package productorconsumidor;
@@ -1041,15 +1104,11 @@ public class ProductorConsumidor {
 }
 ```
 
-##### Clase compartida
-
-Aquí vamos a crear los métodos a los que acceden productores y consumidores y, además, vamos realizar la sincronización entre hilos para que no se produzcan condiciones de carrera.
-
 #### Semáforos
 
 Un semáforo es un mecanismo para permitir, o restringir, el acceso a recursos compartidos en un entorno multiprocesamiento, con varios hilos ejecutándose de forma concurrente.
 
-Los semáforos se emplean para permitir el acceso a diferentes partes de programas (llamados secciones críticas) donde se manipulan variables o recursos que deben ser accedidos de forma especial. Según el valor con que son inicializados se permiten a más o menos procesos utilizar el recurso de forma simultánea.
+Los semáforos se emplean para permitir el acceso a diferentes partes de programas (llamadas secciones críticas) donde se manipulan variables o recursos que deben ser accedidos de forma especial. Según el valor con que son inicializados se permiten a más o menos procesos utilizar el recurso de forma simultánea.
 
 El funcionamiento de los semáforos se basa en el uso de dos métodos, así como en valor inicial *permits* con el que se crea el semáforo:
 
@@ -1155,3 +1214,408 @@ Java, en su paquete **java.util.concurrent** proporciona varias clases *thread-s
 - **Executors**: Nos va a permitir definir un pool de threads (un conjunto de hilos) que se encargará de ejecutar las tareas, pero con un límite en cuanto al número de hilos creados y gestionando el la JVM la cola de hilos que serán ejecutados en ese pool.
 - **Callable**: Viene a poner solución a uno de los problemas que tenemos con la interfaz Runnable, la posibilidad de devolver un valor desde este método. Si se necesita que un proceso devuelva datos al finalizar, se debe crear una clase que implemente la interfaz Callable y defina un método call() que desempeñe la misma función que run() en Runnable.
 - **Future**: es una interfaz que implementa el objeto que devuelve el resultado de la ejecución de un Callable. Se puede seguir ejecutando una aplicación hasta que necesite obtener el resultado del hilo Callable, momento en el que se invoca el método get() en la instancia Future. Si el resultado ya está disponible se recoge y en caso contrario se bloqueará en la llamada hasta que su método call() devuelva el resultado.
+
+### El problema de la cena de los filósofos
+
+Cinco filósofos se sientan alrededor de una mesa y pasan su vida cenando y pensando. Cada filósofo tiene un plato de espaguetis y un tenedor a la izquierda de su plato. Para comer los espaguetis son necesarios dos tenedores y cada filósofo sólo puede tomar los que están a su izquierda y derecha. Si cualquier filósofo toma un tenedor y el otro está ocupado, se quedará esperando, con el tenedor en la mano, hasta que pueda tomar el otro tenedor, para luego empezar a comer.
+
+Si dos filósofos adyacentes intentan tomar el mismo tenedor a una vez, se produce una condición de carrera: ambos compiten por tomar el mismo tenedor, y uno de ellos se queda sin comer.
+
+Si todos los filósofos toman el tenedor que está a su derecha al mismo tiempo, entonces todos se quedarán esperando eternamente, porque alguien debe liberar el tenedor que les falta. Nadie lo hará porque todos se encuentran en la misma situación (esperando que alguno deje sus tenedores). Entonces los filósofos se morirán de hambre. Este bloqueo mutuo se denomina interbloqueo o deadlock.
+
+El problema consiste en encontrar un algoritmo que permita que los filósofos nunca se mueran de hambre. A continuación se muestra una posible solución en Java.
+
+#### Solución
+
+```java
+package filosofosComensales;
+
+public class Tenedor {
+
+    private boolean tomado = false;
+
+    public synchronized void tomar() {
+        while (tomado) {
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                System.err.println("Error al tomar el tenedor");
+            }
+        }
+        tomado = true;
+    }
+
+    public synchronized void dejar() {
+        tomado = false;
+        // Cambia notify por notifyAll y mira que pasa
+        // Ahora rompe el interbloqueo, codigo del main del if...
+        notify();
+        //notifyAll();
+    }
+
+}
+```
+
+```java
+package filosofosComensales;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class Filosofo extends Thread {
+
+    private Tenedor izquierdo;
+    private Tenedor derecho;
+    private final int id;
+    private final int factorPeso;
+    private Random rand = new Random(47);
+
+    private void pausa() throws InterruptedException {
+        if (factorPeso == 0) {
+            return;
+        }
+        TimeUnit.MILLISECONDS.sleep(rand.nextInt(factorPeso * 250));
+    }
+
+    public Filosofo(Tenedor izquierdo, Tenedor derecho, int id, int peso) {
+        this.izquierdo = izquierdo;
+        this.derecho = derecho;
+        this.id = id;
+        factorPeso = peso;
+    }
+
+    public void run() {
+        try {
+            while (!Thread.interrupted()) {
+                System.out.println(this + " " + "pensando");
+                pausa();
+                System.out.println(this + " " + "cogiendo tenedor derecho");
+                derecho.tomar();
+                System.out.println(this + " " + "cogiendo tenedor izquierdo");
+                izquierdo.tomar();
+                System.out.println(this + " " + "comiendo");
+                pausa();
+                derecho.dejar();
+                izquierdo.dejar();
+            }
+        } catch (InterruptedException e) {
+            System.out.println(this + " " + "saliendo por una interrupción");
+        }
+    }
+
+    public String toString() {
+        return "Filósofo " + (id+1);
+    }
+
+}
+```
+
+
+```java
+package filosofosComensales;
+
+public class App
+{
+    public static void main( String[] args )
+    {
+        int peso = 5;
+        int numero = 5;
+        Tenedor[] tenedores = new Tenedor[numero];
+        Filosofo[] filosofos = new Filosofo[numero];
+        for (int i = 0; i < numero; i++) {
+            tenedores[i] = new Tenedor();
+        }
+        for (int i = 0; i < numero; i++) {
+            // Solo funciona con notify, no con notifyAll
+            filosofos[i] = new Filosofo(tenedores[i], tenedores[(i+1)%numero],i,peso);
+            filosofos[i].start();
+
+            // Para romper el interbloqueo circular si usamos notifyAll
+            /*
+             if (i < (numero - 1)) {
+                filosofos[i] = new Filosofo(tenedores[i], tenedores[i+1],i,peso);
+                filosofos[i].start();
+            }else{
+               filosofos[i] = new Filosofo(tenedores[0], tenedores[i],i,peso);
+               filosofos[i].start();
+            }
+            */
+
+        }
+    }
+}
+```
+
+En la implementación actual, todos los filósofos intentan tomar primero el tenedor derecho y luego el izquierdo. Esto puede causar un interbloqueo si cada filósofo toma su tenedor derecho y queda esperando indefinidamente por el tenedor izquierdo, que está en uso por su vecino. Rompiendo la simetría a la hora de coger los tenedores nos supondría eliminar la posibilidad de interbloqueo.
+
+#### Otra solución 
+
+```java
+package filosofosComensalesV2;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Mesa {
+
+    private boolean[] tenedores;
+
+    public Mesa(int numTenedores){
+        this.tenedores = new boolean[numTenedores];
+    }
+
+    public int tenedorIzquierda(int i){
+        return i;
+    }
+
+    public int tenedorDerecha(int i){
+        if(i == 0){
+            return this.tenedores.length - 1;
+        }else{
+            return i - 1;
+        }
+    }
+
+    public synchronized void cogerTenedores(int comensal){
+
+        while(tenedores[tenedorIzquierda(comensal)] || tenedores[tenedorDerecha(comensal)]){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Mesa.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        tenedores[tenedorIzquierda(comensal)] = true;
+        tenedores[tenedorDerecha(comensal)] = true;
+    }
+
+    public synchronized void dejarTenedores(int comensal){
+        tenedores[tenedorIzquierda(comensal)] = false;
+        tenedores[tenedorDerecha(comensal)] = false;
+        notifyAll();
+    }
+
+}
+```
+
+```java
+package filosofosComensalesV2;
+
+public class Filosofo extends Thread {
+
+    private Mesa mesa;
+    private int comensal;
+    private int indiceComensal;
+
+    public Filosofo(Mesa m, int comensal){
+        this.mesa = m;
+        this.comensal = comensal;
+        this.indiceComensal = comensal - 1;
+    }
+
+    public void run(){
+
+        while(true){
+            this.pensando();
+            this.mesa.cogerTenedores(this.indiceComensal);
+            this.comiendo();
+            System.out.println("Filosofo " + comensal +  " deja de comer, tenedores libres " + (this.mesa.tenedorIzquierda(this.indiceComensal) + 1) + ", " + (this.mesa.tenedorDerecha(this.indiceComensal) + 1) );
+            this.mesa.dejarTenedores(this.indiceComensal);
+        }
+
+    }
+
+    public void pensando(){
+
+        System.out.println("Filosofo " + comensal + " esta pensando");
+        try {
+            sleep((long) (Math.random() * 4000));
+        } catch (InterruptedException ex) { }
+
+    }
+
+    public void comiendo(){
+        System.out.println("Filosofo " + comensal + " esta comiendo");
+        try {
+            sleep((long) (Math.random() * 4000));
+        } catch (InterruptedException ex) { }
+    }
+
+}
+```
+
+```java
+package filosofosComensalesV2;
+
+public class App {
+
+    public static void main(String[] args) {
+        Mesa m = new Mesa(5);
+        for (int i = 1; i <= 5; i++) {
+            Filosofo f = new Filosofo(m, i);
+            f.start();
+        }
+    }
+}
+```
+
+#### El problema de los lectores-escritores
+
+Este problema aborda cómo múltiples hilos pueden acceder concurrentemente a un recurso compartido, donde algunos hilos pueden leer el recurso y otros pueden escribir en él, garantizando la sincronización adecuada para evitar condiciones de carrera o inconsistencias de datos.
+
+A continuación se muestra una posible solución.
+
+```java
+package lectoresEscritores;
+
+public class RecursoLectorEscritor {
+
+    private int lectores = 0;
+    private int escritores = 0;
+    private int peticionesEscritura = 0;
+
+    private int dato=0; // Dato a leer y escribir
+
+
+    public synchronized void leer(int lector) {
+        // Si hay alguien escribiendo o peticiones pendientes por escribir
+        while(escritores > 0 || peticionesEscritura > 0){
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+                System.err.println("Leer: Error en get -> " + ex.getMessage());
+            }
+        }
+        lectores++;
+        System.out.println("Lector " + lector + " empieza a leer.");
+        int DELAY = 5000;
+        try{
+            Thread.sleep((int) (Math.random() * DELAY));
+        }
+        catch (InterruptedException e) {
+            System.err.println("Error en la espera del lector");
+        }
+        System.out.println("Lector " + lector + " ha leido el dato: " + this.dato);
+        System.out.println("Lector " + lector + " termina de leer.");
+        lectores--;
+        notifyAll();
+    }
+
+    public synchronized void escribir(int escritor) {
+        // Generamos na petición de escritura
+        peticionesEscritura++;
+        // Mientras haya un lector o una petición pendiente
+        while(lectores > 0 || escritores > 0){
+            try {
+                wait(); // Esperamos
+            } catch (InterruptedException ex) {
+                System.err.println("Escribir: Error en get -> " + ex.getMessage());
+            }
+        }
+        peticionesEscritura--;
+        escritores++;
+        System.out.println("Escritor " + escritor + " comienza a escribir.");
+
+        int DELAY = 5000;
+        try{
+            Thread.sleep((int) (Math.random() * DELAY));
+        }catch (InterruptedException e) {
+            System.err.println("Error en la espera del escritor");
+        }
+        this.dato++;
+        System.out.println("Escritor " + escritor + " ha escrito en el dato: " + this.dato);
+        System.out.println("Escritor " + escritor + " termina de escribir.");
+        escritores--;
+        // Despertamos a todos
+        notifyAll();
+    }
+
+}
+```
+
+```java
+package lectoresEscritores;
+
+import java.util.Random;
+
+public class Lector extends Thread{
+    int veces;
+    int lector;
+    RecursoLectorEscritor RW;
+    private final Random generator = new Random();
+
+    public Lector(int lector, int veces, RecursoLectorEscritor RW) {
+        this.veces = veces;
+        this.lector= lector;
+        this.RW = RW;
+    }
+    @Override
+    public void run() {
+        for (int i = 0; i<veces; i++) {
+            try {
+                Thread.sleep(generator.nextInt(500));
+            }catch (InterruptedException e) {
+                System.err.println("Error en lector");
+            }
+            RW.leer(lector);
+        }
+    }
+
+}
+```
+
+```java
+package lectoresEscritores;
+
+import java.util.Random;
+
+public class Escritor extends Thread {
+    int veces;
+    int escritor;
+    RecursoLectorEscritor RW;
+    private final Random generator = new Random();
+
+    public Escritor(int escritor, int veces, RecursoLectorEscritor RW) {
+        this.escritor=escritor;
+        this.veces = veces;
+        this.RW = RW;
+    }
+    @Override
+    public void run() {
+        for (int i = 0; i<veces; i++) {
+            try {
+                Thread.sleep(generator.nextInt(500));
+            } catch (InterruptedException e) {
+                System.err.println("Error en escritor");
+            }
+            RW.escribir(escritor);
+        }
+    }
+}
+```
+
+```java
+package lectoresEscritores;
+
+public class App {
+    public static void main( String[] args )
+    {
+        RecursoLectorEscritor RW = new RecursoLectorEscritor();
+        int veces = 7;
+        Lector l1= new Lector(1,veces, RW);
+        l1.start();
+        Lector l2= new Lector(2,veces, RW);
+        l2.start();
+        Escritor e1= new Escritor(1,veces, RW);
+        e1.start();
+        Escritor e2= new Escritor(2,veces, RW);
+        e2.start();
+    }
+
+}
+```
+
+### Ejercicio para clase: el problema de los misioneros y los caníbales
+
+Un río es compartido por misioneros y caníbales, solo se utiliza un bote de tres espacios para cruzar el río. Con el fin de garantizar la integridad de los misioneros, no se pueden colocar dos caníbales y un misionero juntos en el mismo viaje, las demás combinaciones son válidas. Cada personaje está representado por un hilo, Caníbal y Misionero. Se sugiere la creación de dos métodos LlegaM() y LlegaC() que llaman los hilos respectivamente, ambos se encargan de realizar la sincronización. Puede existir otro método denominado Cruzar() que se llama cuando el bote está listo para cruzar.
