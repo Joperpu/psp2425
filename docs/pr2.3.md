@@ -10,7 +10,7 @@ Crea en el método main() de la clase **Principal** un objeto Cuenta compartido 
 
 ## Ejercicio 2
 
-Desarrolla un programa en Java que simule el control de stock en un almacén. El almacén recibe piezas a intervalos regulares y también despacha piezas en otros momentos. Para implementar esta simulación, se utilizará el patrón de diseño mproductor-consumidor y se manejará mediante hilos para garantizar la concurrencia y la sincronización.
+Desarrolla un programa en Java que simule el control de stock en un almacén. El almacén recibe piezas a intervalos regulares y también despacha piezas en otros momentos. Para implementar esta simulación, se utilizará el patrón de diseño productor-consumidor y se manejará mediante hilos para garantizar la concurrencia y la sincronización.
 
 El almacén parte de 8000 piezas y tiene una capacidad máxima de 20000 piezas. Si la cantidad de piezas en el almacén alcanza su límite máximo, el productor debe esperar hasta que haya espacio disponible para agregar más piezas.
 
