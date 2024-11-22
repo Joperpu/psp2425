@@ -32,8 +32,8 @@ nav:
     - Práctica 2.2: pr2.2.md
     - Práctica 2.3: pr2.3.md
     - Práctica 2.4: pr2.4.md
-  #- UD3 - Programación de mecanismos de comunicación en red con sockets:
-    #- Teoría UD3: ud3.md
+  - UD3 - Programación de mecanismos de comunicación en red con sockets:
+    - Teoría UD3: ud3.md
 
 copyright: "2024 José María Pérez Puentes - Licencia CC BY-NC-SA 4.0"
 
