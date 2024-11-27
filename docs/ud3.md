@@ -96,6 +96,110 @@ Una NetworkInterface puede tener más de una configuración IP asociada, y norma
 
 La clase InterfaceAddress proporciona información adicional a InetAddress como, por ejemplo, la longitud de la máscara de red y, para una dirección IPv4, la dirección de broadcast de la red a la que pertenece.
 
+### Ejemplo de NetworkInterface
+
+```java
+package direccionamiento;
+
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+
+public class NetworkInterfaceExample {
+
+    public static void main(String[] args) throws SocketException,
+            UnknownHostException {
+
+        // getNetworkInterfaces() returns a list of all interfaces
+        // present in the system.
+        ArrayList<NetworkInterface> interfaces = Collections.list(
+                NetworkInterface.getNetworkInterfaces());
+
+        System.out.println("Information about present Network Interfaces...\n");
+        for (NetworkInterface iface : interfaces) {
+            // isUp() method used for checking whether the interface in process
+            // is up and running or not.
+            if (iface.isUp()) {
+                // getName() method
+                System.out.println("Interface Name: " + iface.getName());
+
+                // getDisplayName() method
+                System.out.println("Interface display name: " + iface.getDisplayName());
+
+                // getHardwareAddress() method
+                System.out.println("Hardware Address: "
+                        + Arrays.toString(iface.getHardwareAddress()));
+
+                // getParent() method
+                System.out.println("Parent: " + iface.getParent());
+
+                // getIndex() method
+                System.out.println("Index: " + iface.getIndex());
+                // Interface addresses of the network interface
+                System.out.println("\tInterface addresses: ");
+
+                // getInterfaceAddresses() method
+                for (InterfaceAddress addr : iface.getInterfaceAddresses()) {
+                    System.out.println("\t\t" + addr.getAddress().toString());
+                }
+                // Interface addresses of the network interface
+                System.out.println("\tInetAddresses associated with this interface: ");
+
+                // getInetAddresses() method returns list of all
+                // addresses currently bound to this interface
+                Enumeration<InetAddress> en = iface.getInetAddresses();
+                while (en.hasMoreElements()) {
+                    System.out.println("\t\t" + en.nextElement().toString());
+                }
+
+                // getMTU() method
+                System.out.println("\tMTU: " + iface.getMTU());
+
+                // getSubInterfaces() method
+                System.out.println("\tSubinterfaces: "
+                        + Collections.list(iface.getSubInterfaces()));
+
+                // isLoopback() method
+                System.out.println("\tis loopback: " + iface.isLoopback());
+
+                // isVirtual() method
+                System.out.println("\tis virtual: " + iface.isVirtual());
+
+                // isPointToPoint() method
+                System.out.println("\tis point to point: " + iface.isPointToPoint());
+
+                // supportsMulticast() method
+                System.out.println("Supports Multicast: " + iface.supportsMulticast());
+
+            }
+        }
+
+        // getByIndex() method returns network interface
+        // with the specified index
+        NetworkInterface nif = NetworkInterface.getByIndex(1);
+
+        // toString() method is used to display textual
+        // information about this network interface
+        System.out.println("Network interface 1: " + nif.toString());
+
+        // getByName() method returns network interface
+        // with the specified name
+        NetworkInterface nif2 = NetworkInterface.getByName("eth0");
+        InetAddress ip = InetAddress.getByName("localhost");
+
+        // getbyInetAddress() method
+        NetworkInterface nif3 = NetworkInterface.getByInetAddress(ip);
+        System.out.println("\nlocalhost associated with: " + nif3);
+    }
+}
+```
+
 [https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/NetworkInterface.html](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/NetworkInterface.html)
 
 ## Clases Java para direcciones IP y resolución de nombres
@@ -107,11 +211,104 @@ La clase **InterfaceAddress** representa la configuración IP de una interfaz. E
 
 [https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/InterfaceAddress.html](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/InterfaceAddress.html)
 
+### Ejemplo InterfaceAddress
+
+```java
+package direccionamiento;
+
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.List;
+
+public class InterfaceaddressExample
+{
+    public static void main(String[] args) throws SocketException
+    {
+        // Modify according to your system
+        NetworkInterface nif = NetworkInterface.getByIndex(1);
+        List<InterfaceAddress> list = nif.getInterfaceAddresses();
+
+        for (InterfaceAddress iaddr : list)
+        {
+            // getAddress() method
+            System.out.println("getAddress() : " + iaddr.getAddress());
+
+            // getBroadcast() method
+            System.out.println("getBroadcast() : " + iaddr.getBroadcast());
+
+            // getNetworkPrefixLength() method
+            System.out.println("PrefixLength : " + iaddr.getNetworkPrefixLength());
+
+            // hashCode() method
+            System.out.println("Hashcode : " + iaddr.hashCode());
+
+            // toString() method
+            System.out.println("toString() : " + iaddr.toString());
+        }
+    }
+}
+```
+
 La clase **InetAddress** representa una dirección IP. Tiene dos subclases para representar direcciones IPv4 e IPv6: Inet4Adress e Inet6Adress.
 
 La clase InetAddress tiene métodos estáticos que realizan resolución de nombres. Es decir, dado un nombre, permiten obtener la dirección IP asociada. También tiene métodos que realizan resolución inversa de nombres. Es decir, que permiten obtener un nombre de host a partir de su dirección IP.
 
 [https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/InetAddress.html](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/net/InetAddress.html)
+
+### Ejemplo InetAddress
+
+```java
+package direccionamiento;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+class InetAddressExample {
+
+    public static void main(String[] args)
+            throws UnknownHostException {
+        // To get and print InetAddress of Local Host
+        InetAddress address1 = InetAddress.getLocalHost();
+        System.out.println("InetAddress of Local Host : "
+                + address1);
+
+        // To get and print InetAddress of Named Host
+        InetAddress address2
+                = InetAddress.getByName("45.22.30.39");
+        System.out.println("InetAddress of Named Host : "
+                + address2);
+
+        // To get and print ALL InetAddresses of Named Host
+        InetAddress address3[]
+                = InetAddress.getAllByName("172.19.25.29");
+        for (int i = 0; i < address3.length; i++) {
+            System.out.println(
+                    "ALL InetAddresses of Named Host : "
+                    + address3[i]);
+        }
+
+        // To get and print InetAddresses of
+        // Host with specified IP Address
+        byte IPAddress[] = {125, 0, 0, 1};
+        InetAddress address4
+                = InetAddress.getByAddress(IPAddress);
+        System.out.println(
+                "InetAddresses of Host with specified IP Address : "
+                + address4);
+
+        // To get and print InetAddresses of Host
+        // with specified IP Address and hostname
+        byte[] IPAddress2
+                = {105, 22, (byte) 223, (byte) 186};
+        InetAddress address5 = InetAddress.getByAddress(
+                "gfg.com", IPAddress2);
+        System.out.println(
+                "InetAddresses of Host with specified IP Address and hostname : "
+                + address5);
+    }
+}
+```
 
 ## Clases Java para sockets de UDP
 
@@ -161,6 +358,177 @@ La forma general de implementar un cliente será:
 
 <center>![Cliente/Servidor UDP](assets/images/ud3/img08.png){ width="700" }</center>
 
+### Ejemplo cliente/servidor con UDP
+
+ServidorUDP.java
+
+```java
+package udp;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class ServidorUDP {
+
+    public static void main(String[] argv) throws Exception {
+    // Buffer para recibir el datagrama
+        byte[] bufer = new byte[1024];
+    // El Socket del servidor se asocia a un puerto para que los clientes
+    // puedan enviar peticiones.
+        DatagramSocket socket = new DatagramSocket(12345);
+    // Se espera la llegada de un DATAGRAMA
+    // Al igual que con TCP, esta llamada a receive es bloqueante
+    // y es la que tiene que marcar la sincronización entre lecturas y
+    // escrituras de las app cliente / servidor
+        System.out.println("Esperando Datagrama ................");
+    // Se crea el objeto que almacenará el mensaje enviado por el cliente
+        DatagramPacket datagramaRecibido = new DatagramPacket(bufer, bufer.length);
+    // Se espera el mensaje y se le pasa el datagrama para que lo almacene ahí
+        socket.receive(datagramaRecibido);
+        String mensajeRecibido = new String(datagramaRecibido.getData());
+    //Información recibida
+        System.out.println("Número de Bytes recibidos: " + datagramaRecibido.getLength());
+        System.out.println("Contenido del Paquete : " + mensajeRecibido.trim());
+        System.out.println("Puerto origen del mensaje: " + datagramaRecibido.getPort());
+        System.out.println("IP de origen : " + datagramaRecibido.getAddress().getHostAddress());
+        System.out.println("Puerto destino del mensaje:" + socket.getLocalPort());
+    // Liberamos los recursos
+        socket.close();
+    }
+}
+```
+
+ClienteUDP.java
+
+```java
+package udp;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class ClienteUDP {
+
+    public static void main(String[] argv) throws Exception {
+    // IP y puerto al que se envía el Datagrama
+        InetAddress destino = InetAddress.getLocalHost();
+        int port = 12345;
+    // Buffer para recibir el datagrama
+        byte[] buffer = new byte[1024];
+    // El mensaje a enviar en el Datagrama se convierte a bytes
+        String mensajeEnviado = "Enviando Saludos !!";
+        buffer = mensajeEnviado.getBytes(); //codifico String a bytes
+    // Se preparara el DatagramPacket que se va a enviar
+        DatagramPacket datagramaEnviado = new DatagramPacket(buffer, buffer.length, destino, port);
+    // En este caso, especificamos un puerto, aunque podríamos dejarlo para
+    // que el SO asigne uno libre
+        DatagramSocket socket = new DatagramSocket(34567);
+        System.out.println("Host destino : " + destino.getHostName());
+        System.out.println("IP Destino : " + destino.getHostAddress());
+        System.out.println("Puerto local del socket: " + socket.getLocalPort());
+        System.out.println("Puerto al que envio: " + datagramaEnviado.getPort());
+    // Envío del Datagrama
+        socket.send(datagramaEnviado);
+    // Cierre y liberación de recursos
+        socket.close();
+    }
+}
+```
+
+### Otro ejemplo de cliente/servidor con UDP
+
+ServidorUDP2.java
+
+```java
+package udp2;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class ServidorUDP2 {
+
+    public static void main(String args[]) throws Exception {
+    //Puerto por el que escucha el servidor: 9876
+        DatagramSocket serverSocket = new DatagramSocket(9876);
+        byte[] recibidos = new byte[1024];
+        byte[] enviados = new byte[1024];
+        String cadena;
+        while (true) {
+            System.out.println("Esperando datagrama.....");
+    //RECIBO DATAGRAMA
+            recibidos = new byte[1024];
+            DatagramPacket paqRecibido = new DatagramPacket(recibidos, recibidos.length);
+            serverSocket.receive(paqRecibido);
+            cadena = new String(paqRecibido.getData());
+    //DIRECCION ORIGEN
+            InetAddress IPOrigen = paqRecibido.getAddress();
+            int puerto = paqRecibido.getPort();
+            System.out.println("\tOrigen: " + IPOrigen + ":" + puerto);
+            System.out.println("\tMensaje recibido: " + cadena.trim());
+    //CONVERTIR CADENA A MAYÚSCULA
+            String mayuscula = cadena.trim().toUpperCase();
+            enviados = mayuscula.getBytes();
+    //ENVIO DATAGRAMA AL CLIENTE
+            DatagramPacket paqEnviado = new DatagramPacket(enviados, enviados.length, IPOrigen, puerto);
+            serverSocket.send(paqEnviado);
+    // Condición de finalización
+            if (cadena.trim().equals("*")) {
+                break;
+            }
+        }//Fin de while
+        serverSocket.close();
+        System.out.println("Socket cerrado...");
+    }
+}
+```
+
+ClienteUDP2.java
+
+```java
+package udp2;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class ClienteUDP2 {
+
+    public static void main(String args[]) throws Exception {
+    // FLUJO PARA ENTRADA ESTANDAR
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        DatagramSocket clientSocket = new DatagramSocket();
+        byte[] enviados = new byte[1024];
+        byte[] recibidos = new byte[1024];
+    // DATOS DEL SERVIDOR al que enviar mensaje
+        InetAddress IPServidor = InetAddress.getLocalHost();// localhost
+        int puerto = 9876; // puerto por el que escucha
+    // INTRODUCIR DATOS POR TECLADO
+        System.out.print("Introduce mensaje: ");
+        String cadena = in.readLine();
+        enviados = cadena.getBytes();
+    // ENVIANDO DATAGRAMA AL SERVIDOR
+        System.out.println("Enviando " + enviados.length + " bytes al servidor.");
+        DatagramPacket envio = new DatagramPacket(enviados, enviados.length, IPServidor, puerto);
+        clientSocket.send(envio);
+    // RECIBIENDO DATAGRAMA DEL SERVIDOR
+        DatagramPacket recibo = new DatagramPacket(recibidos, recibidos.length);
+        System.out.println("Esperando datagrama....");
+        clientSocket.receive(recibo);
+        String mayuscula = new String(recibo.getData());
+    // OBTENIENDO INFORMACIÓN DEL DATAGRAMA
+        InetAddress IPOrigen = recibo.getAddress();
+        int puertoOrigen = recibo.getPort();
+        System.out.println("\tProcedente de: " + IPOrigen + ":" + puertoOrigen);
+        System.out.println("\tDatos: " + mayuscula.trim());
+    //cerrar socket
+        clientSocket.close();
+    }
+}
+```
+
 ## MulticastSocket
 
 La clase MulticastSocket es útil para enviar paquetes a múltiples destinos simultáneamente. Para poder recibir estos paquetes es necesario establecer un grupo multicast, que es un grupo de direcciones IP que comparten el mismo número de puerto.
@@ -171,6 +539,86 @@ emisor no conoce el número de miembros del grupo ni sus direcciones IP.
 Un grupo multicast se especifica mediante una dirección IP de clase D y un número de puerto UDP estándar. Las direcciones desde la 224.0.0.0 a la 239.255.255.255 están destinadas para ser direcciones de multicast. La dirección 224.0.0.0 está reservada y no debe ser utilizada.
 
 <center>![MulticastSocket](assets/images/ud3/img09.png){width="700"}</center>
+
+### Ejemplo de Multicast con UDP
+
+MulticastServidor.java
+
+```java
+package multicast;
+
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.Scanner;
+
+public class MulticastServidor {
+
+    public static void main(String args[]) throws Exception {
+        // Enviamos la información introducida por teclado hasta que se envíe un *
+        Scanner in = new Scanner(System.in);
+        //Se crea el socket multicast.
+        MulticastSocket ms = new MulticastSocket();
+        // Se escoge un puerto para el server
+        int puerto = 12345;
+        // Se escoge una dirección para el grupo
+        InetAddress grupoMulticast = InetAddress.getByName("225.0.0.1");
+        String cadena = "";
+        while (!cadena.trim().equals("*")) {
+            System.out.print("Datos a enviar al grupo: ");
+            cadena = in.nextLine();
+            // Enviamos el mensaje a todos los clientes que se hayan unido al grupo
+            DatagramPacket paquete = new DatagramPacket(cadena.getBytes(), cadena.length(), grupoMulticast, puerto);
+            ms.send(paquete);
+        }
+        // Cerramos recursos
+        ms.close();
+        System.out.println("Socket cerrado...");
+    }
+}
+```
+
+MulticastCliente.java
+
+```java
+package multicast;
+
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+
+public class MulticastCliente {
+
+    public static void main(String args[]) throws Exception {
+        // El puerto debe ser el mismo en todos los clientes, ya que el
+        // Se crea el socket multicast
+        // servidor multicast envía la información a la IP multicast y a un puerto
+        int puerto = 12345;//Puerto multicast
+        MulticastSocket ms = new MulticastSocket(puerto);
+        //Nos unimos al grupo multicast
+        InetAddress grupo = InetAddress.getByName("225.0.0.1");
+        ms.joinGroup(grupo);
+        //ms.joinGroup(mcastaddr, netIf);
+        String msg = "";
+        while (!msg.trim().equals("*")) {
+            // El buffer se crea dentro del bucle para que se sobrescriba
+            // con cada nuevo mensaje
+            byte[] buf = new byte[1000];
+            DatagramPacket paquete = new DatagramPacket(buf, buf.length);
+            //Recibe el paquete del servidor multicast
+            ms.receive(paquete);
+            msg = new String(paquete.getData());
+            System.out.println("Recibo: " + msg.trim());
+        }
+        // Abandonamos grupo
+        ms.leaveGroup(grupo);
+        //ms.leaveGroup(mcastaddr, netIf);
+        // Cerramos recursos
+        ms.close();
+        System.out.println("Socket cerrado...");
+    }
+}
+```
 
 ## Clases Java para sockets TCP
 
