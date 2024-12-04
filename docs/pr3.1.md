@@ -63,6 +63,44 @@ Desarrolla una aplicación cliente/servidor en Java que permita a múltiples cli
 	- Proporciona un breve manual de usuario que explique cómo utilizar la aplicación, incluyendo los comandos disponibles y ejemplos de uso.
 	- Incluye instrucciones sobre cómo compilar y ejecutar la aplicación.
 
+#### Ayuda para la aplicación cliente
+
+Un posible esquema del código cliente podría ser este:
+
+```
+INICIO DEL PROGRAMA
+
+1. Configurar la dirección y el puerto del servidor al que se conectará el cliente.
+
+2. Crear un socket UDP para comunicación.
+
+3. Solicitar al usuario que ingrese su nombre de usuario.
+
+4. Enviar un mensaje al servidor para registrarse con el nombre de usuario ingresado.
+
+5. Crear un hilo separado para recibir mensajes del servidor:
+    a. Mientras el programa esté en ejecución:
+        i. Esperar a recibir mensajes del servidor.
+        ii. Al recibir un mensaje:
+            - Mostrar el mensaje al usuario.
+    b. Manejar posibles errores en la recepción de mensajes.
+
+6. En el hilo principal, permitir que el usuario ingrese mensajes para enviar:
+    a. Mientras el programa esté en ejecución:
+        i. Leer la entrada del usuario.
+        ii. Si el usuario ingresa un comando para salir:
+            - Notificar al servidor de la desconexión.
+            - Terminar el programa.
+        iii. En caso contrario:
+            - Enviar el mensaje al servidor para que sea procesado.
+
+7. Al terminar el programa:
+    a. Cerrar el socket y liberar recursos.
+    b. Esperar a que el hilo de recepción finalice adecuadamente.
+
+FIN DEL PROGRAMA
+```
+
 ## Criterios de evaluación
 
 Esta práctica evalúa los criterios de evaluación **a)**, **b)**, **c)**, **d)**, **e)**, **f)** y **g)** del **RA3**. Para su corrección se tendrá en cuenta:
