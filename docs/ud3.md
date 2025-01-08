@@ -673,6 +673,152 @@ TCP permite que los datos se reciban en el proceso de destino en el mismo orden 
 
 <center>![Cliente/Servidor TCP](assets/images/ud3/img12.png){width="700"}</center>
 
+#### Ejemplo cliente/servidor en TCP
+
+ClienteTCP.java
+
+```java
+package tcp;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class ClienteTCP {
+
+    public static void main(String[] args) throws IOException {
+        Socket socketCliente = null;
+        BufferedReader entrada = null;
+        PrintWriter salida = null;
+
+        // Creamos un socket en el lado cliente, enlazado con un
+        // servidor que está en la misma máquina que el cliente
+        // y que escucha en el puerto 4444
+        try {
+            socketCliente = new Socket("localhost", 4444);
+            // Obtenemos el canal de entrada
+            entrada = new BufferedReader(
+                    new InputStreamReader(socketCliente.getInputStream()));
+            // Obtenemos el canal de salida
+            salida = new PrintWriter(
+                    new BufferedWriter(
+                            new OutputStreamWriter(socketCliente.getOutputStream())), true);
+        } catch (IOException e) {
+            System.err.println("No puede establecer canales de E/S para la conexión");
+            System.exit(-1);
+        }
+        Scanner stdIn = new Scanner(System.in);
+
+        String linea;
+
+        // El programa cliente no analiza los mensajes enviados por el
+        // usuario, simplemente los reenvía al servidor hasta que este
+        // se despide con "Adios"
+        try {
+            while (true) {
+                // Leo la entrada del usuario
+                linea = stdIn.nextLine();
+                // La envia al servidor por el OutputStream
+                salida.println(linea);
+                // Recibe la respuesta del servidor por el InputStream
+                linea = entrada.readLine();
+                // Envía a la salida estándar la respuesta del servidor
+                System.out.println("Respuesta servidor: " + linea);
+                // Si es "Adios" es que finaliza la comunicación
+                if (linea.equals("Adios")) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("IOException: " + e.getMessage());
+        }
+
+        // Libera recursos
+        salida.close();
+        entrada.close();
+        stdIn.close();
+        socketCliente.close();
+    }
+}
+```
+
+ServidorTCP.java
+
+```java
+package tcp;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServidorTCP {
+
+    public static final int PORT = 4444;
+
+    public static void main(String[] args) throws IOException {
+        // Establece el puerto en el que escucha peticiones
+        ServerSocket socketServidor = null;
+        try {
+            socketServidor = new ServerSocket(PORT);
+        } catch (IOException e) {
+            System.out.println("No puede escuchar en el puerto: " + PORT);
+            System.exit(-1);
+        }
+
+        Socket socketCliente = null;
+        BufferedReader entrada = null;
+        PrintWriter salida = null;
+
+        System.out.println("Escuchando: " + socketServidor);
+        try {
+            // Se bloquea hasta que recibe alguna petición de un cliente
+            // abriendo un socket para el cliente
+            socketCliente = socketServidor.accept();
+            System.out.println("Conexión aceptada: " + socketCliente);
+            // Establece canal de entrada
+            entrada = new BufferedReader(
+                    new InputStreamReader(socketCliente.getInputStream()));
+            // Establece canal de salida
+            salida = new PrintWriter(
+                    new BufferedWriter(
+                            new OutputStreamWriter(socketCliente.getOutputStream())), true);
+
+            // Hace eco de lo que le proporciona el cliente, hasta que recibe "Adios"
+            while (true) {
+                // Recibe la solicitud del cliente por el InputStream
+                String str = entrada.readLine();
+                // Envía a la salida estándar el mensaje del cliente
+                System.out.println("Cliente: " + str);
+                // Le envía la respuesta al cliente por el OutputStream                
+                salida.println(str);
+                // Si es "Adios" es que finaliza la comunicación
+                if (str.equals("Adios")) {
+                    break;
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("IOException: " + e.getMessage());
+        }
+        salida.close();
+        entrada.close();
+        socketCliente.close();
+        socketServidor.close();
+    }
+
+}
+```
+
 ### Servidor multihilo
 
 Si queremos que un servidor pueda atender varias peticiones de forma simultánea, debemos usar hilos para dotarlo de esa capacidad.
@@ -694,3 +840,189 @@ El servidor multihilo se ayuda de una clase Worker que hereda de Thread, pudiend
 Esta clase Worker es la encargada de realizar toda la comunicación con el cliente y el servidor. Para poder hacerlo, en su constructor recibe el Socket que se crea cuando se recibe la conexión de un cliente ServerSocket.accept().
 
 <center>![Servidor multihilo](assets/images/ud3/img13.png){width="700"}</center>
+
+#### Ejemplos servidor multihilo
+
+Worker.java
+
+```java
+package tcpMultihilo;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class Worker extends Thread {
+
+    private Socket socketCliente;
+    private BufferedReader entrada = null;
+    private PrintWriter salida = null;
+
+    Worker(Socket socketCliente) {
+        this.socketCliente = socketCliente;
+    }
+
+    @Override
+    public void run() {
+        try {
+            // Establece canal de entrada
+            entrada = new BufferedReader(new InputStreamReader(
+                    socketCliente.getInputStream()));
+            // Establece canal de salida
+            salida = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    socketCliente.getOutputStream())), true);
+
+            // Realizamos la comunicación entre servidor y cliente
+            // Hacemos una recepción de información desde el cliente
+            String mensajeRecibido = entrada.readLine();
+            System.out.println("<-- Cliente: " + mensajeRecibido);
+
+            // Hacemos un envío al cliente
+            String mensajeEnviado = "Mensaje enviado desde el servidor al cliente";
+            salida.println(mensajeEnviado);
+            System.out.println("--> Cliente: " + mensajeEnviado);
+        } catch (Exception e) {
+        }
+    }
+
+}
+```
+
+ServidorMultihilo.java
+
+```java
+package tcpMultihilo;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServidorMultihilo {
+    
+    public static final int PORT = 4444;
+
+    public static void main(String[] args) throws IOException {
+        // Establece el puerto en el que escucha peticiones
+        ServerSocket socketServidor = null;
+        try {
+            socketServidor = new ServerSocket(PORT);
+        } catch (IOException e) {
+            System.out.println("No puede escuchar en el puerto: " + PORT);
+            System.exit(-1);
+        }
+
+        Socket socketCliente = null;
+        BufferedReader entrada = null;
+        PrintWriter salida = null;
+
+        System.out.println("Escuchando: " + socketServidor);
+        try {
+            while (true) {
+            // Se bloquea hasta que recibe alguna petición de un cliente
+            // abriendo un socket para el cliente
+            socketCliente = socketServidor.accept();
+            System.out.println("Conexión aceptada: " + socketCliente);
+            // Para seguir aceptando peticiones de otros clientes
+            // se crea un nuevo hilo que se encargará de la comunicación con el cliente
+            new Worker(socketCliente).start();
+        }
+
+        } catch (IOException e) {
+            System.out.println("IOException: " + e.getMessage());
+        }
+        salida.close();
+        entrada.close();
+        socketCliente.close();
+        socketServidor.close();
+    }
+}
+
+```
+
+Ejemplo servidor Eco multihilo
+
+```java
+package socketsTCP_MultihiloEco;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+
+class HiloServidor implements Runnable {
+
+    private final static String COD_TEXTO = "UTF-8";
+    private final Socket socketComunicacion;
+
+    HiloServidor(Socket socketComunicacion) {
+        this.socketComunicacion = socketComunicacion;
+    }
+
+    @Override
+    public void run() {
+        try ( InputStream isDeCliente = this.socketComunicacion.getInputStream();  OutputStream osACliente = this.socketComunicacion.getOutputStream();  InputStreamReader isrDeCliente = new InputStreamReader(isDeCliente, COD_TEXTO);  BufferedReader brDeCliente = new BufferedReader(isrDeCliente);  OutputStreamWriter oswACliente = new OutputStreamWriter(osACliente, COD_TEXTO);  BufferedWriter bwACliente = new BufferedWriter(oswACliente)) {
+            String lineaRecibida;
+            while ((lineaRecibida = brDeCliente.readLine()) != null && lineaRecibida.length() > 0) {
+                bwACliente.write("#" + lineaRecibida + "#");
+                bwACliente.newLine();
+                bwACliente.flush();
+            }
+        } catch (IOException ex) {
+            System.out.println("Excepción de E/S");
+            ex.printStackTrace();
+            System.exit(1);
+        } finally {
+            if (this.socketComunicacion != null) {
+                try {
+                    this.socketComunicacion.close();
+                    System.out.println("Cliente desconectado.");
+                } catch (IOException ex) {
+                }
+            }
+        }
+    }
+
+}
+
+class SocketsTCP_ServidorMultihiloEco {
+
+    public static void main(String[] args) {
+
+        int numPuerto = 4444;
+
+        try ( ServerSocket socketServidor = new ServerSocket(numPuerto)) {
+            System.out.printf("Creado socket de servidor en puerto %d. Esperando conexiones de clientes.\n", numPuerto);
+
+            while (true) {    // Acepta una conexión de cliente tras otra
+                Socket socketComNuevoCliente = socketServidor.accept();
+                System.out.printf("Cliente conectado desde %s:%d.\n",
+                        socketComNuevoCliente.getInetAddress().getHostAddress(),
+                        socketComNuevoCliente.getPort());
+
+                Thread hiloSesion = new Thread(new HiloServidor(socketComNuevoCliente));
+                hiloSesion.start();
+            }
+
+        } catch (IOException ex) {
+            System.out.println("Excepción de E/S");
+            ex.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+}
+
+```
