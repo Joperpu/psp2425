@@ -36,6 +36,12 @@ nav:
     - Teoría UD3: ud3.md
     - Práctica 3.1: pr3.1.md
     - Práctica 3.2: pr3.2.md
+  - UD4 - Generación de servicios en red:
+    - Teoría UD4: ud4.md
+    - Práctica 4.1: pr4.1.md
+  #- UD5 - Técnicas de programación seguras:
+    #- Teoría UD5: ud5.md
+    #- Práctica 5.1: pr5.1.md
 
 copyright: "2024 José María Pérez Puentes - Licencia CC BY-NC-SA 4.0"
 
@@ -51,3 +57,6 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - md_in_html
+  - admonition
+  - pymdownx.details
