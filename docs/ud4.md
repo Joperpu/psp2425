@@ -106,6 +106,7 @@ Para agregar una imagen a su correo electrónico HTML en Jakarta Mail, se pueden
 ```html
 <img src="data:image/jpeg;base64,base64-encoded-data-here" />
 ```
+
 - Enlazando imágenes. Tenemos imágenes vinculadas que son esencialmente imágenes alojadas en algún servidor externo al que luego crea un enlace. Podemos hacerlo usando la etiqueta img en el cuerpo HTML de la siguiente manera.
 
 ```html
@@ -363,11 +364,20 @@ for (String name : file.list()) {
 System.setProperty("user.dir", fileName);
 ```
 
-### Enviar archivos al servidor
+### Enviar y descargar archivos al servidor
 
 En FTP los archivos se pueden cargar de dos formas diferentes:
 
+Envío:
+
 - Modo ASCII: el archivo se carga como texto, con las terminaciones de línea convertidas al estándar de red.
+- Modo binario: el archivo se carga tal, sin ninguna conversión.
+
+Descarga:
+
+- Modo ASCII: el archivo se descarga como texto, con las terminaciones de línea convertidas al estándar local
+- Modo binario: el archivo se descarga tal cual, sin ninguna conversión.
+
 
 ```java
 public boolean sendTextFile(String fileName) throws FileNotFoundException, IOException {
@@ -384,7 +394,6 @@ public boolean sendTextFile(String fileName) throws FileNotFoundException, IOExc
 }
 ```
 
-- Modo binario: el archivo se carga tal, sin ninguna conversión.
 
 ```java
 public boolean getTextFile(String fileName) throws IOException {
@@ -405,10 +414,6 @@ public boolean getTextFile(String fileName) throws IOException {
     return download;
 }
 ```
-
-### Descargar archivos del servidor
-
-- Modo ASCII: el archivo se descarga como texto, con las terminaciones de línea convertidas al estándar local
 
 ```java
 public boolean sendBinaryFile(String fileName) throws IOException {
@@ -431,8 +436,6 @@ public boolean sendBinaryFile(String fileName) throws IOException {
     return upload;
 }
 ```
-
-- Modo binario: el archivo se descarga tal cual, sin ninguna conversión.
 
 ```java
 public boolean getBinaryFile(String fileName) throws IOException {
