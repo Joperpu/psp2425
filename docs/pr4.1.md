@@ -16,7 +16,7 @@ A continuación se muestran los nombres de usuario, contraseñas, carpetas y arc
 | -- | -- | -- |
 | usuario1 | usu1 | usuario1/LOG.txt |
 | usuario2 | usu2 | usuario2/LOG.txt |
-| usuario2 | usu2 | usuario2/LOG.txt |
+| usuario3 | usu3 | usuario3/LOG.txt |
 
 Crea una aplicación en Java que, usando Apache Commons Net, pida por consola un nombre de usuario y contraseña en un proceso repetitivo que finalizará cuando el nombre de usuario sea *. Una vez introducido el nombre de usuario y la contraseña se deberá conectar al servidor FTP que se acaba de crear.
 
