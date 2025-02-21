@@ -1,0 +1,1208 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://joperpu.github.io/psp2425/pr3.2/">
+      
+      
+        <link rel="prev" href="../pr3.1/">
+      
+      
+        <link rel="next" href="../ud4/">
+      
+      
+      <link rel="icon" href="../assets/images/logo.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
+    
+    
+      
+        <title>Práctica 3.2 - Programación de servicios y procesos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practica-32-el-juego-de-la-ruleta" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href=".." title="Programación de servicios y procesos" class="md-header__button md-logo" aria-label="Programación de servicios y procesos" data-md-component="logo">
+      
+  <img src="../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Programación de servicios y procesos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Práctica 3.2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Programación de servicios y procesos" class="md-nav__button md-logo" aria-label="Programación de servicios y procesos" data-md-component="logo">
+      
+  <img src="../assets/images/logo.png" alt="logo">
+
+    </a>
+    Programación de servicios y procesos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Página principal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UD1 - Programación multiproceso
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            UD1 - Programación multiproceso
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ud1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teoría UD1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr1.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 1.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr1.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 1.2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UD2 - Programación multihilo
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            UD2 - Programación multihilo
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ud2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teoría UD2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr2.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 2.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr2.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 2.2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr2.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 2.3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr2.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 2.4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UD3 - Programación de mecanismos de comunicación en red con sockets
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            UD3 - Programación de mecanismos de comunicación en red con sockets
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ud3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teoría UD3
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr3.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 3.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Práctica 3.2
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 3.2
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#descripcion-de-la-tarea" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descripción de la tarea
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Descripción de la tarea">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#juego-individual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Juego individual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#juego-colectivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Juego colectivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resumen-paquetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resumen paquetes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#criterios-de-evaluacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criterios de evaluación
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metodo-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método de entrega
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UD4 - Generación de servicios en red
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            UD4 - Generación de servicios en red
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ud4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teoría UD4
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr4.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 4.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UD5 - Técnicas de programación seguras
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            UD5 - Técnicas de programación seguras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ud5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teoría UD5
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pr5.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Práctica 5.1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#descripcion-de-la-tarea" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descripción de la tarea
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Descripción de la tarea">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#juego-individual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Juego individual
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#juego-colectivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Juego colectivo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resumen-paquetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resumen paquetes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#criterios-de-evaluacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Criterios de evaluación
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metodo-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      Método de entrega
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="practica-32-el-juego-de-la-ruleta">Práctica 3.2 - El juego de la ruleta</h1>
+<p>Diseño e implementación del juego de la ruleta permitiendo jugar de manera individual o bien en grupos. La finalidad del juego es averiguar la frase o palabra secreta que se muestra en cada partida.</p>
+<h2 id="descripcion-de-la-tarea">Descripción de la tarea</h2>
+<p>La comunicación entre los clientes del juego de la ruleta se realizará bajo el protocolo de transporte TCP. La práctica que se propone consiste en la realización de una aplicación cliente/servidor (multihilo) que implemente el juego de la ruleta mediante el cual, los usuarios del juego (los clientes) se conectan al servicio (el servidor) y pueden jugar una partida, permitiendo o bien jugar una partida de forma individual o bien competir en el juego con otros usuarios. Todas las partidas tanto individuales como colectivas versarán sobre la categoría de refranes.</p>
+<h3 id="juego-individual">Juego individual</h3>
+<p>La primera variante del juego nos permite jugar una partida al ahorcado de forma individual. Nos conectaremos al servidor y nos permitirá iniciar una partida.</p>
+<p>El procedimiento que se seguirá será el siguiente:</p>
+<ul>
+<li>Un cliente se conecta al servicio y si la conexión ha sido correcta el sistema devuelve “+0k. Usuario conectado”.</li>
+<li>Para poder acceder a los servicios es necesario identificarse mediante el envío del usuario y clave para que el sistema lo valide. Los mensajes que deben indicarse son: “USUARIO usuario” para indicar el usuario, tras el cual el servidor enviará “+Ok. Usuario correcto” o “–Err. Usuario incorrecto”. En caso de ser correcto el siguiente mensaje que se espera recibir es “PASSWORD password”, donde el servidor responderá con el mensaje de “+Ok. Usuario
+validado” o “–Err. Error en la validación”.</li>
+<li>Un usuario nuevo podrá registrarse mediante el mensaje “REGISTRO –u usuario –p password”. Se llevará un control para evitar colisiones con los nombre de usuarios ya existentes.</li>
+<li>
+<p>Una vez conectado y validado, el cliente podrá llevar a cabo una partida individual en el juego indicando un mensaje de “PARTIDA-INDIVIDUAL”. Recibido este mensaje en el servidor, éste se encargará de mandarle una frase
+con la que iniciar el juego indicando mediante el símbolo “-“ las posiciones que deben ser rellenadas con consonante o vocal y el símbolo “ “ para indicar el espacio en blanco entre las palabras que componen la frase. No se tendrán en cuenta en la frase los signos de puntuación como elemento a adivinar por el jugador. En este punto son admitidos tres tipos de mensajes que se puede enviar al servidor:</p>
+<ul>
+<li>CONSONANTE letra, donde letra indica una consonante que se piensa que puede estar en la frase.</li>
+<li>VOCAL letra, donde letra indica una vocal que se piensa que puede estar en la frase.</li>
+<li>RESOLVER frase, donde frase representará una cadena que contiene el refrán que queremos resolver. El contenido de la cadena debe ser independiente de si se trata de mayúsculas o minúsculas.</li>
+</ul>
+</li>
+<li>
+<p>Cada vez que un cliente mande un mensaje de CONSONANTE/VOCAL al servidor, éste deberá devolverle “+Ok. Existe la consonante” seguido por la frase con la información que se lleva de momento si la letra está contenida en la frase a resolver o “+Ok. No existe la consonante” seguido por la frase con la información que se lleva de momento en caso de que la letra no exista en la palabra a averiguar. En caso de error en la recepción del mensaje, debido a que se trate de una consonante o vocal inválida, se procederá con un mensaje “-Err. Mensaje no válido”.</p>
+</li>
+<li>Se llevará la cuenta del número de intentos que ha realizado el usuario para resolver la frase, para que finalmente al terminar la partida se le asigne una puntuación a cada usuario. La puntuación será fija y tendrá establecido los siguientes valores, si se ha resuelto en menos de 5 intentos tendrá una valoración de 150 puntos, si lo consigue entre 5 y 8 intentos se le asignará 100 puntos, entre 9 y 11 será 70 puntos, entre 12 y 15 será 50 puntos y todo lo que sea más de 15 intentos tendrá una puntuación de 0 puntos.</li>
+<li>
+<p>Simplemente se podrá enviar un mensaje RESOLVER, en caso de acertarse o fallarse se termina la partida y el usuario simplemente podrá optar por salir del sistema o realizar otra partida:</p>
+<ul>
+<li>Si se acierta la frase se le mandará al cliente un mensaje “+Ok. Enhorabuena”, mostrándole una estadística de las frases acertadas y falladas y su puntuación desde que se registró por primera vez.</li>
+<li>Si se falla la frase, se le mandará al cliente un mensaje “+Ok. Le deseamos mejor suerte la próxima vez”, mostrándole una estadística de las frases acertadas y falladas y su puntuación desde que se registró por primera vez.</li>
+</ul>
+</li>
+<li>
+<p>Un mensaje de un cliente en la que se envíe la petición “SALIR”, hará que el servidor le dé de baja del sistema. Este mensaje puede ser enviado en cualquier momento, incluso en una partida empezada.</p>
+</li>
+<li>Cualquier mensaje que no use uno de los especificadores detallados, generará un mensaje de “-Err” por parte del servidor.</li>
+</ul>
+<p>Algunas de las restricciones a tener en cuenta son:</p>
+<ul>
+<li>La comunicación será mediante consola.</li>
+<li>El cliente deberá aceptar como argumento una dirección IP que será la dirección del servidor al que se conectará.</li>
+<li>El protocolo deberá permitir mandar mensajes de tamaño arbitrario. Teniendo como tamaño máximo envío una cadena de longitud 200 caracteres.</li>
+<li>El servidor aceptará servicios en el puerto 2050.</li>
+<li>El servidor debe permitir la conexión de varios clientes simultáneamente. Esto deberá resolverse mediante el uso de hilos.</li>
+<li>El número máximo de clientes conectados para jugar será de 50 usuarios.</li>
+<li>Todos los mensajes devueltos por el servidor que se necesiten contemplar, seguirán el criterio de ir precedidos por +Ok. Texto informativo, si la petición se ha podido aceptar sin problemas y –Err. Texto informativo, si ha habido algún tipo de error.</li>
+<li>Las frases que se van a resolver no tendrán en cuenta los signos de puntuación. En caso de que la frase cuente con alguno de ellos, aparecerá directamente como elemento visible desde el principio en la frase que se le muestra al usuario.</li>
+</ul>
+<h3 id="juego-colectivo">Juego colectivo</h3>
+<p>La segunda variante del juego nos permite jugar con varias personas, concretamente el juego estará formado por grupo de tres personas.</p>
+<p>El procedimiento que se seguirá será el siguiente:</p>
+<ul>
+<li>Un cliente se conecta al servicio y si la conexión ha sido correcta el sistema devuelve “+0k. Usuario conectado”.</li>
+<li>Para poder acceder a los servicios es necesario identificarse mediante el envío del usuario y clave para que el sistema lo valide. Los mensajes que deben indicarse son: “USUARIO usuario” para indicar el usuario, tras el cual el servidor enviará “+Ok. Usuario correcto” o “–Err. Usuario incorrecto”. En caso de ser correcto el siguiente mensaje que se espera recibir es “PASSWORD password”, donde el servidor responderá con el mensaje de “+Ok. Usuario validado” o “–Err. Error en la validación”.</li>
+<li>Un usuario nuevo podrá registrarse mediante el mensaje “REGISTRO –u usuario –p password”. Se llevará un control para evitar colisiones con los nombre de usuarios ya existentes.</li>
+<li>
+<p>Una vez conectado y validado, el cliente podrá llevar a cabo una partida en el juego indicando un mensaje de “PARTIDA-GRUPO”. Recibido este mensaje en el servidor, éste se encargará de comprobar las personas que tiene pendiente para comenzar una partida:</p>
+<ul>
+<li>Si con esta petición, ya se forma un grupo de tres personas, mandará un mensaje a cada una de ellas, para indicarle que la partida va a comenzar.</li>
+<li>Si todavía falta alguna persona para iniciar la partida, mandará un mensaje al nuevo usuario, especificando que tiene su petición y que está a la espera de la conexión de otros jugadores. El usuario en este caso deberá quedarse a la espera de recibir un mensaje para jugar o también se le permitirá salir de la aplicación.</li>
+<li>Cuando se disponga de tres usuarios, se le deja un mensaje a los tres usuarios indicando que va a comenzar la partida “+Ok. Empieza la partida” y seguido se indica la frase con la que iniciar la partida. Se indicarán todas las posiciones que representan una consonante o vocal mediante el símbolo “-“ y el espacio en blanco “ “, se utilizará para representar la separación entre las palabras de la frase. No se tendrán en cuenta en la frase los signos de puntuación como elemento a adivinar por el jugador. El orden de los usuarios en el juego será el mismo orden en el que se ha realizado la conexión (aunque puede implementarse otro criterio si lo veis más conveniente).</li>
+<li>Cada usuario podrá ir mandando mensajes de CONSONANTE/VOCAL letra, mientras la frase contenga la letra que va especificando. Esta información se va mostrando a cada uno de los usuarios, al igual que los mensajes que envía el usuario que está jugando en cada momento. Cuando falle, se pasará a otro usuario, así hasta que un usuario escoja la opción de RESOLVER la frase. </li>
+</ul>
+<p>En este punto son admitidos tres tipos de mensajes que se puede enviar al servidor:</p>
+<ul>
+<li>CONSONANTE letra, donde letra indica una consonante que se piense que puede estar en la frase. La puntuación que se obtiene, sería 50 puntos por cada vez que la consonante aparezca en la frase a resolver. Si la frase desconocida no contiene ninguna consonante de la que has elegido, se pasará el turno al siguiente jugador.</li>
+<li>VOCAL letra, para poder mandar este mensaje necesitas tener al menos 50 puntos, que se restarán por cada vocal que solicites, con independencia del número de veces que aparezca.</li>
+<li>RESOLVER frase, donde frase representará una cadena que contiene el refrán que queremos resolver.</li>
+</ul>
+</li>
+<li>
+<p>Se debe tener cuidado con que el servidor cuando lleguen peticiones de usuarios cuando no sea su turno de jugar. En caso de que envíen un mensaje cuando no es su turno, deberá responder que todavía no es turno y deben esperar. La especificación del mensaje que se enviaría sería: “-Err. Debe esperar su turno”.</p>
+</li>
+<li>En caso de que un usuario envíe la petición RESOLVER y ésta no sea la frase correcta, la partida termina, el usuario que ha fallado queda automáticamente con una puntuación de cero y ganaría el usuario que tuviese hasta ese momento una mayor puntuación. Se enviará un mensaje a cada uno de los jugadores, para indicar puntuaciones y ganador.</li>
+<li>Para salir del servicio se usará el mensaje “SALIR”, de este modo el servidor lo eliminará de clientes conectados y el juego continuará entre los restantes participantes. Este hecho se le debe de comunicar al resto de usuarios. Cuando quede un único jugador podrá terminar el panel o salir del sistema.</li>
+<li>Cualquier mensaje que no use uno de los especificadores detallados, generará un mensaje de “-Err” por parte del servidor.</li>
+</ul>
+<p>Algunas restricciones a tener en cuenta en esta nueva versión que se debe implementar es:</p>
+<ul>
+<li>La comunicación será mediante consola.</li>
+<li>El cliente deberá aceptar como argumento una dirección IP que será la dirección del servidor al que se conectará.</li>
+<li>El protocolo deberá permitir mandar mensajes de tamaño arbitrario. Teniendo como tamaño máximo envío una cadena de longitud 200 caracteres.</li>
+<li>El servidor aceptará servicios en el puerto 2050.</li>
+<li>El servidor debe permitir la conexión de varios clientes simultáneamente. Esto deberá resolverse mediante el uso de hilos.</li>
+<li>El número máximo de clientes conectados será de 50 usuarios.</li>
+<li>Todos los mensajes devueltos por el servidor que se necesiten contemplar, seguirán el criterio de ir precedidos por +Ok. Texto informativo, si la petición se ha podido aceptar sin problemas y –Err. Texto informativo, si ha habido algún tipo de error.</li>
+<li>Las frases que se van a resolver no tendrán en cuenta los signos de puntuación. En caso de que la frase cuente con alguno de ellos, aparecerá directamente como elemento visible desde el principio en la frase que se le muestra al usuario.</li>
+</ul>
+<h3 id="resumen-paquetes">Resumen paquetes</h3>
+<p>Considerando la práctica completa, vamos a resumir los tipos de mensajes con el siguiente formato cada uno:</p>
+<ul>
+<li>USUARIO usuario: mensaje para introducir el usuario que desea.</li>
+<li>PASSWORD contraseña: mensaje para introducir la contraseña asociada al usuario.</li>
+<li>REGISTER –u usuario –p password: mensaje mediante el cual el usuario solicita registrarse para acceder al juego de la ruleta que escucha en el puerto TCP 2050.</li>
+<li>CONSONANTE letra, donde letra indica una consonante que se piensa que puede estar en la frase.</li>
+<li>VOCAL letra, para poder mandar este mensaje necesitas tener al menos 50 puntos, que se restarán por cada vocal que solicites, con independencia del número de veces que aparezca.</li>
+<li>RESOLVER frase, donde frase representará una cadena que contiene el refrán que queremos resolver.</li>
+<li>SALIR: mensaje para solicitar salir del juego.</li>
+<li>Cualquier otra tipo de mensaje que se envíe al servidor, no será reconocida por el protocolo como un mensaje válido y generará su correspondiente “-Err.” por parte del servidor.</li>
+</ul>
+<h2 id="criterios-de-evaluacion">Criterios de evaluación</h2>
+<p>Esta práctica evalúa todos los criterios de evaluación del <strong>RA3</strong>. Para su corrección se tendrá en cuenta:</p>
+<ol>
+<li>Implementación del protocolo y mensajes (20%)<ul>
+<li>Correcta recepción y envío de mensajes según lo descrito en la práctica:</li>
+<li>USUARIO, PASSWORD, REGISTRO, CONSONANTE, VOCAL, RESOLVER, SALIR, etc.</li>
+<li>Respuestas adecuadas: +Ok. / –Err. con los textos de confirmación o error correspondientes.</li>
+<li>Manejo de mensajes no válidos (respuestas de tipo “-Err. Mensaje no válido”).</li>
+<li>Manejo adecuado de tamaños máximos de mensaje (hasta 200 caracteres).</li>
+</ul>
+</li>
+<li>Funcionalidad del juego individual (20%)<ul>
+<li>Lógica correcta para iniciar y finalizar partidas individuales.</li>
+<li>Control de los intentos y asignación de puntuaciones (conforme a las reglas: menos de 5 intentos = 150 puntos, entre 5 y 8 = 100, etc.).</li>
+<li>Posibilidad de RESOLVER la frase en cualquier momento y envío de mensajes adecuados (+Ok. Enhorabuena o +Ok. Le deseamos mejor suerte…).</li>
+<li>Mantenimiento y actualización de la estadística de aciertos, fallos y puntuación total por usuario.</li>
+</ul>
+</li>
+<li>Funcionalidad del juego colectivo (25%)<ul>
+<li>Creación y manejo de grupos de tres jugadores (PARTIDA-GRUPO).</li>
+<li>Control de turnos de cada jugador (permitir jugar sólo al usuario correspondiente, en caso contrario: “-Err. Debe esperar su turno”).</li>
+<li>Gestión de puntos:<ul>
+<li>+50 puntos por cada aparición de la consonante.</li>
+<li>–50 puntos al pedir una vocal (se necesita al menos 50 puntos para solicitarla).</li>
+</ul>
+</li>
+<li>Finalización correcta de la partida colectiva:<ul>
+<li>Ganador designado en caso de que alguien falle al RESOLVER.</li>
+<li>Comunicación de puntuaciones finales y notificación al resto de jugadores.</li>
+</ul>
+</li>
+<li>Manejo de la salida de un jugador (mensaje SALIR) y continuidad del juego con el resto, cuando sea posible.</li>
+</ul>
+</li>
+<li>Manejo de concurrencia y varios clientes (15%)<ul>
+<li>Uso adecuado de hilos para gestionar múltiples conexiones simultáneas.</li>
+<li>Control del número máximo de 50 clientes conectados.</li>
+<li>Evitar bloqueos o comportamientos indeterminados al manejar varios clientes en paralelo.</li>
+</ul>
+</li>
+<li>Estructura y calidad del código (10%)<ul>
+<li>Claridad y organización del código fuente (modularización, funciones, clases, etc.).</li>
+<li>Legibilidad: uso de nombres de variables adecuados, comentarios, e indentación coherente.</li>
+<li>Manejo adecuado de excepciones o errores a nivel de implementación (control de flujos, cierres de sockets, etc.).</li>
+</ul>
+</li>
+<li>Documentación y guía de uso (10%)<ul>
+<li>Instrucciones claras de compilación y ejecución (cliente y servidor).</li>
+<li>Explicación de cómo se gestiona cada comando y su flujo dentro del juego (diagrama o descripción).</li>
+<li>Descripción de las funciones más relevantes en el código.</li>
+<li>Inclusión de un breve manual de usuario con ejemplos de interacción (entrada/salida) para cada modo de juego.</li>
+</ul>
+</li>
+</ol>
+<h2 id="metodo-de-entrega">Método de entrega</h2>
+<p>Comprime el proyecto junto con la documentación en un archivo ZIP y súbelo a la plataforma Moodle Centros en el lugar dedicado a ello. El archivo ZIP deberá tener el siguiente formato:</p>
+<p><strong>Apellido1Apellido2_Nombre_PSP_UD3_P2.zip</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      2025 José María Pérez Puentes - Licencia CC BY-NC-SA 4.0
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+    
+  </body>
+</html>
