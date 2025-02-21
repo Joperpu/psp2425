@@ -109,6 +109,167 @@ igual que las clases Stream del paquete java.io, de las que además son clases d
 
 Por lo tanto, cuando tenemos que leer o escribir información, podemos añadir un envoltorio más al wrapper que utilizamos habitualmente y esto nos permite que tanto las lecturas como las escrituras se hagan cifradas, usando el algoritmo y la clave definidos para el objeto Cipher. El uso más común es para leer o escribir en archivos en los que, de igual forma, cambiando el wrapper nos permite leer o escribir la información de forma cifrada/descifrada.
 
+### Ejemplo de criptografía simétrica
+
+StreamCrypto.java
+
+```java
+package encriptacion_simetrica;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
+public class StreamCrypto {
+
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IOException {
+        File file;
+        String filePath = "a.txt";
+        file = new File(filePath);
+//Se define el objeto Cipher (Algoritmo/modo/relleno)
+        Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding"); //DESede
+// Configuramos el modo de CIFRADO
+        byte[] valorClave = "12345678123456781234567812345678".getBytes();
+// CIFRADO DEL STREAM (fichero a.txt)
+
+        c.init(Cipher.ENCRYPT_MODE,
+                new SecretKeySpec(valorClave, "AES"));
+        try ( OutputStream outputStream = new BufferedOutputStream(
+                new CipherOutputStream(new FileOutputStream(file), c))) {
+            for (int i = 0; i < 10; i++) {
+                outputStream.write(new String("Hello World\n").getBytes());
+            }
+        }
+// DESCIFRADO DEL STREAM (fichero a.txt)
+
+        c.init(Cipher.DECRYPT_MODE,
+                new SecretKeySpec(valorClave, "AES"));
+        try ( InputStream inputStream = new BufferedInputStream(
+                new CipherInputStream(new FileInputStream(file), c))) {
+            System.out.println("Contenido del fichero (descifrado):\n" + new String(inputStream.readAllBytes()));
+        }
+    }
+}
+```
+
+SecretKeyEncrypt.java
+
+```java
+package encriptacion_simetrica;
+
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
+
+public class SecretKeyEncrypt {
+
+    public static void main(String[] args) {
+        SecretKey claveSecreta = null;
+        try {
+//Generamos clave secreta
+// Podemos crear una nueva clave
+            claveSecreta = getNewKey();
+// O bien usar una clave guardada en algún almacén, fichero, etc.
+            claveSecreta = getKeyFromData();
+            System.out.println("Clave usada: " + claveSecreta.getFormat());
+//Se define el objeto Cipher (Algoritmo/modo/relleno)
+            Cipher c = Cipher.getInstance("DESede"); // AES/ECB/PKCS5Padding
+// Configuramos el modo de CIFRADO
+            c.init(Cipher.ENCRYPT_MODE, claveSecreta);
+// Aquí leemos la información que queremos cifrar
+// Puede ser una cadena o leerla de un archivo
+            byte[] textoPlano = "Texto que queremos cifrar para la prueba".getBytes();
+// Si queremos ir cifrando poco a poco, vamos haciendo llamadas
+// al método update
+// c.update(textoPlano);
+// Se realiza el proceso final de cifrado de la información
+            byte[] textoCifrado = c.doFinal(textoPlano);
+            System.out.println("Texto cifrado con clave secreta (raw):\n" + new String(textoCifrado));
+            System.out.println("Texto cifrado con clave secreta (hex):\n" + toHexadecimal(textoCifrado));
+// El proceso de descifrado es equivalente
+// Cambiamos el modo de ENCRYPT a DECRYPT
+// Usamos la misma clave
+// Pasamos el texto cifrado para obtener el original
+            c.init(Cipher.DECRYPT_MODE, claveSecreta);
+            byte[] textoOriginal = c.doFinal(textoCifrado);
+//Leemos bloques de bytes del fichero y lo vamos escribiendo ya cifrado en el fichero de salida
+            System.out.println("Texto descifrado:\n" + new String(textoOriginal));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static SecretKey getNewKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        KeyGenerator kg = KeyGenerator.getInstance("DESede");
+        kg.init(112);
+        SecretKey clave = kg.generateKey();
+        return clave;
+    }
+
+    static SecretKey getNewRandomKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+// Clave obtenida usando un generador de número aleatorios seguro
+        KeyGenerator genClaves = KeyGenerator.getInstance("DESede");
+// Utilizamos un algoritmo de generación de aleatorios
+        SecureRandom srand = SecureRandom.getInstance("SHA1PRNG");
+        genClaves.init(srand);
+        SecretKey clave = genClaves.generateKey();
+        System.out.println("Formato de clave: " + clave.getFormat());
+        /*
+SecretKeyFactory keySpecFactory = SecretKeyFactory.getInstance("DESede");
+DESedeKeySpec keySpec = (DESedeKeySpec) keySpecFactory.getKeySpec(clave, DESedeKeySpec.class);
+byte[] valorClave = keySpec.getKey();
+         */
+        return clave;
+    }
+
+    static SecretKey getKeyFromData() throws InvalidKeySpecException, NoSuchAlgorithmException {
+// La clave se puede obtener desde un fichero o cualquier otra fuente
+        byte valorClave[] = "12345678123456781234567812345678".getBytes();
+        SecretKeySpec keySpec = new SecretKeySpec(valorClave, "DESede");
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DESede");
+        SecretKey clave = keyFactory.generateSecret(keySpec);
+        return clave;
+    }
+
+    static Key getKeyFromData2() throws InvalidKeySpecException, NoSuchAlgorithmException {
+// La clave se puede obtener desde un fichero o cualquier otra fuente
+        byte valorClave[] = "12345678123456781234567812345678".getBytes();
+        Key clave = new SecretKeySpec(valorClave, "AES");
+        return clave;
+    }
+
+    static String toHexadecimal(byte[] hash) {
+        String hex = "";
+        for (int i = 0; i < hash.length; i++) {
+            String h = Integer.toHexString(hash[i] & 0xFF);
+            if (h.length() == 1) {
+                hex += "0";
+            }
+            hex += h;
+        }
+        return hex.toUpperCase();
+    }
+}
+```
+
 ## Criptografía asimétrica
 
 La criptografía asimétrica o criptografía de clave pública supuso una auténtica revolución en su momento. Permitía el intercambio seguro de información (confidencialidad, autenticación y no repudio) entre interlocutores que no compartían ningún secreto.
@@ -129,6 +290,228 @@ Entre los algoritmos de cifrado asimétrico más utilizados se encuentran:
 - TLS/SSL protocol.
 
 <center>![Criptografía asimétrica](assets/images/ud5/img02.png){ width="600" }</center>
+
+### Ejemplo de criptografía asimétrica
+
+RsaKeyPairEncrypt.java
+
+```java
+package encriptacion_asimetrica;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+public class RsaKeyPairEncrypt {
+
+    private static final int tamanoClaveAsimetrica = 1024;
+    private static final String algoritmoClaveAsimetrica = "RSA";
+    private static final String ficheroClavePublica = "claves/clavepublica.der";
+    private static final String ficheroClavePrivada = "claves/claveprivada.pkcs8";
+
+    public static void main(String[] args) throws InvalidKeyException, IllegalBlockSizeException, InvalidKeySpecException {
+        try {
+//////////////////////////////////////////////////
+// CIFRADO
+//////////////////////////////////////////////////
+// Leemos la clave pública de un archivo
+            PublicKey clavePublica = leerClavePublica(ficheroClavePublica);
+// Preparamos la información que queremos cifrar
+            String textoEnClaro = "Quiero cifrar este mensaje de prueba";
+            byte[] mensajeEnClaro = textoEnClaro.getBytes("UTF-8");
+// Realizamos el proceso de cifrado con clave pública
+// Los pasos son exactamente los mismos que con el cifrado simétrico
+            Cipher cifrado = Cipher.getInstance(algoritmoClaveAsimetrica);
+            cifrado.init(Cipher.ENCRYPT_MODE, clavePublica);
+            byte[] mensajeCifrado = cifrado.doFinal(mensajeEnClaro);
+// Visualizamos el mensaje cifrado en modo texto
+            MostrarMensajeBase64(mensajeCifrado);
+//////////////////////////////////////////////////
+// DESCIFRADO
+//////////////////////////////////////////////////
+// Leemos la clave privada de un archivo
+            PrivateKey clavePrivada = leerClavePrivada(ficheroClavePrivada);
+// Realizamos el proceso de descifrado con clave privada
+// Los pasos son exactamente los mismos que con el cifrado simétrico
+// Cipher cifrado = Cipher.getInstance(algoritmoClaveAsimetrica);
+            cifrado.init(Cipher.DECRYPT_MODE, clavePrivada);
+            byte[] mensajeDescifrado = cifrado.doFinal(mensajeCifrado);
+// Visualizamos el mensaje descifrado
+            System.out.println("Texto descifrado:\n" + new String(mensajeDescifrado, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            System.out.println("Codificación de caracteres UTF-8 no soportada");
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println("No se ha encontrado la implementación del algoritmo " + algoritmoClaveAsimetrica );
+} catch (NoSuchPaddingException ex) {
+            System.err.println("El relleno especificado para el algoritmo no está permitido");
+        } catch (InvalidKeyException ex) {
+            System.err.println("Especificación de clave no válida");
+        } catch (IllegalBlockSizeException ex) {
+            System.err.println("Tamaño de bloque no válido");
+        } catch (BadPaddingException ex) {
+            System.err.println("Excepción con el relleno usado por el algoritmo");
+        }
+    }
+
+    private static PublicKey leerClavePublica(String ficheroClave) throws InvalidKeySpecException {
+        byte[] clavePublicaEncoded;
+// Leemos la información del archivo
+        try ( FileInputStream publicKeyFile = new FileInputStream(ficheroClave)) {
+            clavePublicaEncoded = publicKeyFile.readAllBytes();
+        } catch (FileNotFoundException ex) {
+            System.out.println("No se ha encontrado el archivo " + ficheroClave + " con la clave pública.");
+            return null;
+        } catch (IOException ex) {
+            System.out.println("Se ha producido un error de E/S accediendo al archivo " + ficheroClave + " de la clave ");
+return null;
+        }
+// Generamos la clave a partir del array de bytes leídos
+        KeyFactory keyFactory;
+        try {
+            keyFactory = KeyFactory.getInstance(algoritmoClaveAsimetrica);
+            X509EncodedKeySpec codificacionClavePublica = new X509EncodedKeySpec(clavePublicaEncoded);
+            PublicKey clavePublica = keyFactory.generatePublic(codificacionClavePublica);
+// Devolvemos la clave pública generada
+            return clavePublica;
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println("No se ha encontrado la implementación del algoritmo " + algoritmoClaveAsimetrica );
+return null;
+        } catch (InvalidKeySpecException ex) {
+      
+            return null;
+        }
+    }
+
+    private static PrivateKey leerClavePrivada(String ficheroClave) {
+        byte[] clavePrivadaEncoded;
+// Leemos la información del archivo
+        try ( FileInputStream privateKeyFile = new FileInputStream(ficheroClave)) {
+            clavePrivadaEncoded = privateKeyFile.readAllBytes();
+        } catch (FileNotFoundException ex) {
+            System.out.println("No se ha encontrado el archivo " + ficheroClave + " con la clave privada.");
+            return null;
+        } catch (IOException ex) {
+            System.out.println("Se ha producido un error de E/S accediendo al archivo " + ficheroClave + " de la clave");
+return null;
+        }
+// Generamos la clave a partir del array de bytes leídos
+        KeyFactory keyFactory;
+        try {
+            keyFactory = KeyFactory.getInstance(algoritmoClaveAsimetrica);
+            PKCS8EncodedKeySpec codificacionClavePrivada = new PKCS8EncodedKeySpec(clavePrivadaEncoded);
+            PrivateKey clavePrivada = keyFactory.generatePrivate(codificacionClavePrivada);
+// Devolvemos la clave pública generada
+            return clavePrivada;
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println("No se ha encontrado la implementación del algoritmo " + algoritmoClaveAsimetrica);
+return null;
+        } catch (InvalidKeySpecException ex) {
+          
+            return null;
+        }
+    }
+
+    private static void MostrarMensajeBase64(byte[] mensajeCifrado) {
+        System.out.println("Mensaje cifrado visualizado como texto en Base64:");
+        System.out.println(Base64.getEncoder().encodeToString(mensajeCifrado).replaceAll("(.{76})", "$1\n"));
+    }
+}
+```
+
+GenerateRsaKeyPair.java
+
+```java
+package encriptacion_asimetrica;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+public class GenerateRsaKeyPair {
+
+    private static final int tamanoClaveAsimetrica = 1024;
+    private static final String algoritmoClaveAsimetrica = "RSA";
+    private static final String ficheroClavePublica = "claves/clavepublica.der";
+    private static final String ficheroClavePrivada = "claves/claveprivada.pkcs8";
+
+    public static void main(String[] args) {
+        try {
+// Elijo un algoritmo de generación de números aleatorios de los denominados
+// altamente seguros para generar el par de claves
+            SecureRandom algoritmoSeguro = SecureRandom.getInstanceStrong();
+// Preparo el generados de claves para usar el algortimo RSA
+            KeyPairGenerator genParClaves = KeyPairGenerator.getInstance(algoritmoClaveAsimetrica);
+            genParClaves.initialize(tamanoClaveAsimetrica, algoritmoSeguro);
+// Creo el par de claves y lo guardo en objetos
+            KeyPair parClaves = genParClaves.generateKeyPair();
+            PublicKey clavePublica = parClaves.getPublic();
+            PrivateKey clavePrivada = parClaves.getPrivate();
+// Guardamos la clave pública en un archivo y la visualizamos
+// La clave se guarda con codificación DER y en formato X.509
+            guardaClavePublicaX509(clavePublica);
+// Guardamos la clave privada en un archivo y la visualizamos
+// La clave se guarda con codificación DER y en formato PKCS#8
+            guardaClavePrivadaPKCS8(clavePrivada);
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println("No se ha encontrado la implementación del algortimo en ningún Provider");
+        }
+    }
+
+    private static void guardaClavePublicaX509(PublicKey clavePublica) {
+        try ( FileOutputStream publicKeyFile = new FileOutputStream(ficheroClavePublica)) {
+            X509EncodedKeySpec codificacionClavePublica = new X509EncodedKeySpec(clavePublica.getEncoded(), algoritmoClaveAsimetrica);
+            publicKeyFile.write(clavePublica.getEncoded());
+// Visualizamos la clave por consola
+            MostrarClaveBase64(codificacionClavePublica.getEncoded(),
+                    codificacionClavePublica.getFormat(), ficheroClavePublica);
+        } catch (IOException ex) {
+            System.out.println("Error almacenando la clave pública en " + ficheroClavePublica);
+        }
+    }
+
+    private static void guardaClavePrivadaPKCS8(PrivateKey clavePrivada) {
+        try ( FileOutputStream privateKeyFile = new FileOutputStream(ficheroClavePrivada)) {
+            PKCS8EncodedKeySpec codificacionClavePrivada = new PKCS8EncodedKeySpec(clavePrivada.getEncoded(), algoritmoClaveAsimetrica);
+            privateKeyFile.write(clavePrivada.getEncoded());
+// Visualizamos la clave por consola
+            MostrarClaveBase64(codificacionClavePrivada.getEncoded(),
+                    codificacionClavePrivada.getFormat(), ficheroClavePrivada);
+        } catch (IOException ex) {
+            System.out.println("Error almacenando la clave privada en " + ficheroClavePrivada);
+        }
+    }
+
+    private static void MostrarClaveBase64(byte[] clave, String formatoClave, String ficheroClave) {
+        System.out.println("Clave guardada en formato " + formatoClave
+                + " en fichero " + ficheroClave);
+        System.out.println(Base64.getEncoder().encodeToString(clave).replaceAll("(.{76})", "$1\n"));
+    }
+}
+```
 
 ## Firma digital
 
@@ -318,4 +701,125 @@ Esperando al cliente 3
 Programa Cliente iniciado....
 Recibiendo del SERVIDOR:
 Saludos al cliente del servidor
+```
+
+##### Ejemplo cliente/servidor con SSL
+
+SSLClient.java
+
+```java
+package cliente_servidor_SSL;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
+public class SSLClient {
+
+    public static void main(String[] arg) throws IOException {
+        SSLSocket clienteSSL = null;
+        DataInputStream flujoEntrada = null; //FLUJO DE ENTRADA DE CLIENTE
+        DataOutputStream flujoSalida = null; //FLUJO DE SALIDA AL CLIENTE
+// Las propiedades se pueden especificar mediante código, o bien mediante
+// argumentos de la JVM en la llamada a la aplicación
+// System.setProperty("javax.net.ssl.trustStore", System.getProperty("user.dir") + "/CertificadosConfianzaClien
+        System.setProperty("javax.net.ssl.trustStore", "CertificadosConfianzaCliente");
+        System.setProperty("javax.net.ssl.trustStorePassword", "87654321");
+// Inicialización del ServerSocket SSL
+        int puerto = 6000;
+        String host = "localhost";
+        System.out.println("Programa Cliente iniciado....");
+        SSLSocketFactory sfact = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        clienteSSL = (SSLSocket) sfact.createSocket(host, puerto);
+// Trabajamos do DataInputStream y DataOutputStream para simplificar
+// el código del ejemplo
+        flujoSalida = new DataOutputStream(clienteSSL.getOutputStream());
+        flujoEntrada = new DataInputStream(clienteSSL.getInputStream());
+// Envío un saludo al servidor
+        flujoSalida.writeUTF("Saludos al SERVIDOR DESDE EL CLIENTE");
+// El Servidor responde con un mensaje
+        System.out.println("Recibiendo del SERVIDOR: \n\t" + flujoEntrada.readUTF());
+// CERRAR STREAMS Y SOCKETS
+        flujoEntrada.close();
+        flujoSalida.close();
+        clienteSSL.close();
+    }
+
+    void mostrarInformacionSesionSSL(SSLSocket cliente) throws SSLPeerUnverifiedException, CertificateParsingException {
+//------------------------------------------------------------------------------
+//Ejemplo de la múltiple información sobre la sesión SSL
+// que se puede obtener a partir
+        SSLSession session = ((SSLSocket) cliente).getSession();
+        System.out.println("Host: " + session.getPeerHost());
+        System.out.println("Cifrado: " + session.getCipherSuite());
+        System.out.println("Protocolo: " + session.getProtocol());
+        System.out.println("IDentificador:" + new BigInteger(session.getId()));
+        System.out.println("Creación de la sesión: " + session.getCreationTime());
+        X509Certificate certificate = (X509Certificate) session.getPeerCertificates()[0];
+        System.out.println("Propietario: " + certificate.getSubjectAlternativeNames());
+        System.out.println("Algoritmo: " + certificate.getSigAlgName());
+        System.out.println("Tipo: " + certificate.getType());
+        System.out.println("Emisor: " + certificate.getIssuerAlternativeNames());
+        System.out.println("Número Serie: " + certificate.getSerialNumber());
+//-----------------------------------------------------------------------------
+    }
+
+}
+```
+
+SSLServer.java
+
+```java
+package cliente_servidor_SSL;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+
+public class SSLServer {
+
+    public static void main(String[] arg) throws IOException {
+        SSLSocket clienteConectado = null;
+        DataInputStream flujoEntrada = null; //FLUJO DE ENTRADA DE CLIENTE
+        DataOutputStream flujoSalida = null; //FLUJO DE SALIDA AL CLIENTE
+
+// Las propiedades se pueden especificar mediante código, o bien mediante
+// argumentos de la JVM en la llamada a la aplicación
+// System.setProperty("javax.net.ssl.keyStore", System.getProperty("user.dir") + "\\ClavesServidor");
+// System.setProperty("javax.net.ssl.keyStorePassword", "12345678");
+// Inicialización del ServerSocket SSL
+        int puerto = 6000;
+        SSLServerSocketFactory sfact = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        SSLServerSocket servidorSSL = (SSLServerSocket) sfact.createServerSocket(puerto);
+        for (int i = 1; i < 5; i++) {
+            System.out.println("Esperando al cliente " + i);
+// Se espera la conexión de un cliente con accept
+            clienteConectado = (SSLSocket) servidorSSL.accept();
+// Trabajamos do DataInputStream y DataOutputStream para simplificar
+// el código del ejemplo
+            flujoEntrada = new DataInputStream(clienteConectado.getInputStream());
+            flujoSalida = new DataOutputStream(clienteConectado.getOutputStream());
+// El cliente envía un mensaje
+            System.out.println("Recibiendo del CLIENTE: " + i + " \n\t" + flujoEntrada.readUTF());
+// El Servidor responde con un saludo
+            flujoSalida.writeUTF("Saludos al cliente del servidor");
+        }
+// CERRAR STREAMS Y SOCKETS
+        flujoEntrada.close();
+        flujoSalida.close();
+        clienteConectado.close();
+        servidorSSL.close();
+    }
+
+}
 ```
