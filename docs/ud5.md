@@ -621,7 +621,7 @@ Para obtener un socket servidor seguro o SSLServerSocket:
 
 ```java
 SSLServerSocketFactory sfact = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-SSLServerSocket servidorSSL = (SSLServerSocket) = sfact.createServerSocket(puerto);
+SSLServerSocket servidorSSL = (SSLServerSocket) sfact.createServerSocket(puerto);
 ```
 
 El método createServerSocket(int puerto) devuelve un socket de servidor enlazado al puerto especificado. Para crear un SSLSocket:
